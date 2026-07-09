@@ -48,8 +48,11 @@
                 <view class="topic-tag"><text>随机推荐</text></view>
                 <text class="front-headline">今天去{{randomPick.shop}}碰碰运气</text>
 
-                <view class="news-photo lead-photo">
-                  <image src="{{randomPick.imageUrl || leadDish.imageUrl}}" mode="aspectFill" />
+                <view class="news-photo lead-photo random-photo">
+                  <view class="random-photo-inner">
+                    <text class="random-photo-shop">{{randomPick.shop || '食堂窗口'}}</text>
+                    <text class="random-photo-hint">点击换一个推荐</text>
+                  </view>
                   <view class="score-badge">
                     <text class="score-badge-num">换</text>
                     <text class="score-badge-unit">一个</text>
