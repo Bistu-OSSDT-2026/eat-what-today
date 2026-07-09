@@ -171,7 +171,7 @@ db.serialize(() => {
     { name: '桂林米粉', categoryName: '粉面', canteenName: '二食堂', floorName: '一楼', shopName: '桂林米粉', description: '出餐快，汤粉和拌粉都适合赶课前后。', avgScore: 4.6, ratingCount: 72, imageUrl: '/images/dish3.jpg' },
     { name: '兰州拉面', categoryName: '粉面', canteenName: '一食堂', floorName: '一楼', shopName: '兰州拉面', description: '汤头清亮，面条劲道，冬天来一碗很暖。', avgScore: 4.5, ratingCount: 68, imageUrl: '/images/dish1.jpg' },
     { name: '重庆小面', categoryName: '粉面', canteenName: '一食堂', floorName: '一楼', shopName: '重庆小面', description: '麻辣鲜香，重口味同学的首选。', avgScore: 4.4, ratingCount: 55, imageUrl: '/images/dish2.jpg' },
-    { name: '酸菜鱼', categoryName: '小炒', canteenName: '一食堂', floorName: '二楼', shopName: '酸菜鱼', description: '鱼肉嫩滑，酸菜爽口，分量足。', avgScore: 4.6, ratingCount: 81, imageUrl: '/images/dish3.jpg' },
+    { name: '酸菜鱼', categoryName: '小炒', canteenName: '一食堂', floorName: '二楼', shopName: '酸菜鱼', description: '鱼肉嫩滑，酸菜爽口，分量足。', avgScore: 4.6, ratingCount: 81, imageUrl: '/images/dish1.jpg' },
     { name: '煲仔饭', categoryName: '盖饭', canteenName: '一食堂', floorName: '二楼', shopName: '煲仔饭', description: '锅巴香脆，腊肠香甜，饭粒分明。', avgScore: 4.5, ratingCount: 63, imageUrl: '/images/dish1.jpg' },
     { name: '自助餐', categoryName: '盖饭', canteenName: '一食堂', floorName: '二楼', shopName: '自助餐', description: '菜品丰富，自选称重，想吃啥拿啥。', avgScore: 4.3, ratingCount: 112, imageUrl: '/images/dish2.jpg' },
     { name: '沙县小吃', categoryName: '粉面', canteenName: '二食堂', floorName: '一楼', shopName: '沙县小吃', description: '蒸饺、拌面、炖汤，性价比之王。', avgScore: 4.2, ratingCount: 89, imageUrl: '/images/dish3.jpg' },

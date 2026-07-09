@@ -904,8 +904,8 @@
       if (!f.shops?.length) { showToast('暂无窗口'); return; }
       const s = f.shops[Math.floor(Math.random()*f.shops.length)];
       const shopEl = $('sideRandomShop');
-      if (shopEl) { shopEl.textContent = s; $('sideRandomPlace').textContent = `${c.name} &#183; ${f.name}`; }
-      else { showToast(`${c.name} &#183; ${f.name} &#183; ${s}`); }
+      if (shopEl) { shopEl.textContent = s; $('sideRandomPlace').textContent = `${c.name} · ${f.name}`; }
+      else { showToast(`${c.name} · ${f.name} · ${s}`); }
     }
 
     // ===== 榜单渲染 =====
