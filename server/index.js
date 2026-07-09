@@ -127,6 +127,24 @@ db.serialize(() => {
     expiresAt INTEGER
   )`)
 
+  db.run(`CREATE TABLE IF NOT EXISTS web_users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    token TEXT UNIQUE,
+    nickname TEXT,
+    createdAt INTEGER,
+    updatedAt INTEGER
+  )`)
+
+  db.run(`CREATE TABLE IF NOT EXISTS favorites (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    userToken TEXT NOT NULL,
+    dishId INTEGER NOT NULL,
+    createdAt INTEGER,
+    UNIQUE(userToken, dishId)
+  )`)
+
   // 插入默认公告
   db.get("SELECT id FROM announcements WHERE schoolId = ?", [DEFAULT_SCHOOL_ID], (err, row) => {
     if (!row) {
@@ -208,9 +226,20 @@ app.get('/api/announcement', (req, res) => {
 // 食堂数据（返回模拟数据）
 app.get('/api/canteenData', (req, res) => {
   res.json(ok([
-    { _id: 'c1', id: 'c1', schoolId: DEFAULT_SCHOOL_ID, name: '第一食堂', floors: ['一层', '二层', '三层'] },
-    { _id: 'c2', id: 'c2', schoolId: DEFAULT_SCHOOL_ID, name: '第二食堂', floors: ['一层', '二层'] },
-    { _id: 'c3', id: 'c3', schoolId: DEFAULT_SCHOOL_ID, name: '清真食堂', floors: ['一层'] },
+    { _id: 'c1', id: 'c1', schoolId: DEFAULT_SCHOOL_ID, name: '第一食堂', floors: [
+      { name: '一层', shops: ['黄焖鸡米饭', '麻辣香锅', '兰州拉面', '重庆小面', '煎饼果子', '肉夹馍'] },
+      { name: '二层', shops: ['自助餐', '小炒肉', '酸菜鱼', '煲仔饭', '过桥米线', '铁板烧'] },
+      { name: '三层', shops: ['火锅', '烤肉', '韩式料理', '日式料理', '西餐厅', '甜品站'] },
+    ]},
+    { _id: 'c2', id: 'c2', schoolId: DEFAULT_SCHOOL_ID, name: '第二食堂', floors: [
+      { name: '一层', shops: ['沙县小吃', '桂林米粉', '湘菜馆', '川菜馆', '粤菜馆', '饺子馆'] },
+      { name: '二层', shops: ['汉堡王', '肯德基', '必胜客', '赛百味', '奶茶店', '咖啡厅'] },
+      { name: '三层', shops: ['麻辣烫', '冒菜', '干锅', '烤鱼', '烧烤', '小龙虾'] },
+      { name: '四层', shops: ['精致自助', '海鲜餐厅', '牛排馆', '寿司店', '私房菜', '特色火锅'] },
+    ]},
+    { _id: 'c3', id: 'c3', schoolId: DEFAULT_SCHOOL_ID, name: '清真食堂', floors: [
+      { name: '一层', shops: ['清真拉面', '大盘鸡', '羊肉串', '烤包子', '手抓饭', '酸奶'] },
+    ]},
   ]))
 })
 
@@ -403,6 +432,122 @@ app.post('/api/createCategory', async (req, res) => {
       res.json(ok({ id: String(this.lastID), name }))
     })
   })
+})
+
+// Web 用户注册
+app.post('/api/webRegister', (req, res) => {
+  const username = cleanString(req.body.username)
+  const password = cleanString(req.body.password)
+  const nickname = cleanString(req.body.nickname) || username
+
+  if (!username) return res.json(fail('用户名不能为空'))
+  if (!password || password.length < 4) return res.json(fail('密码至少4位'))
+
+  db.get('SELECT id FROM web_users WHERE username = ?', [username], (err, row) => {
+    if (err) return res.json(fail(err.message))
+    if (row) return res.json(fail('用户名已存在'))
+
+    const token = crypto.randomBytes(16).toString('hex')
+    const t = now()
+    db.run(
+      'INSERT INTO web_users (username, password, token, nickname, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?)',
+      [username, password, token, nickname, t, t],
+      function(err2) {
+        if (err2) return res.json(fail(err2.message))
+        res.json(ok({ token, nickname, username }))
+      }
+    )
+  })
+})
+
+// Web 用户登录
+app.post('/api/webLogin', (req, res) => {
+  const username = cleanString(req.body.username)
+  const password = cleanString(req.body.password)
+
+  if (!username || !password) return res.json(fail('用户名和密码不能为空'))
+
+  db.get('SELECT * FROM web_users WHERE username = ? AND password = ?', [username, password], (err, row) => {
+    if (err) return res.json(fail(err.message))
+    if (!row) return res.json(fail('用户名或密码错误'))
+
+    const token = crypto.randomBytes(16).toString('hex')
+    const t = now()
+    db.run('UPDATE web_users SET token = ?, updatedAt = ? WHERE id = ?', [token, t, row.id], (err2) => {
+      if (err2) return res.json(fail(err2.message))
+      res.json(ok({ token, nickname: row.nickname, username: row.username }))
+    })
+  })
+})
+
+// 获取用户信息
+app.get('/api/userInfo', (req, res) => {
+  try {
+    const token = requireToken(req)
+    db.get('SELECT username, nickname FROM web_users WHERE token = ?', [token], (err, row) => {
+      if (err || !row) return res.json(fail('用户不存在'))
+      res.json(ok({ username: row.username, nickname: row.nickname }))
+    })
+  } catch (e) {
+    res.json(fail(e.message))
+  }
+})
+
+// 获取收藏列表
+app.get('/api/favorites', (req, res) => {
+  try {
+    const userToken = requireToken(req)
+    db.all(
+      'SELECT dishId FROM favorites WHERE userToken = ? ORDER BY createdAt DESC',
+      [userToken],
+      (err, rows) => {
+        if (err) return res.json(fail(err.message))
+        res.json(ok(rows.map(r => String(r.dishId))))
+      }
+    )
+  } catch (e) {
+    res.json(fail(e.message))
+  }
+})
+
+// 添加收藏
+app.post('/api/addFavorite', (req, res) => {
+  try {
+    const userToken = requireToken(req)
+    const dishId = Number(req.body.dishId)
+    if (!dishId) return res.json(fail('缺少菜品 ID'))
+
+    db.run(
+      'INSERT INTO favorites (userToken, dishId, createdAt) VALUES (?, ?, ?)',
+      [userToken, dishId, now()],
+      (err) => {
+        if (err) return res.json(fail('已收藏'))
+        res.json(ok(true))
+      }
+    )
+  } catch (e) {
+    res.json(fail(e.message))
+  }
+})
+
+// 取消收藏
+app.post('/api/removeFavorite', (req, res) => {
+  try {
+    const userToken = requireToken(req)
+    const dishId = Number(req.body.dishId)
+    if (!dishId) return res.json(fail('缺少菜品 ID'))
+
+    db.run(
+      'DELETE FROM favorites WHERE userToken = ? AND dishId = ?',
+      [userToken, dishId],
+      function(err) {
+        if (err) return res.json(fail(err.message))
+        res.json(ok(true))
+      }
+    )
+  } catch (e) {
+    res.json(fail(e.message))
+  }
 })
 
 // 首页 - 展示页面

@@ -21,15 +21,14 @@
       flex-direction: column;
       background: #f5f0e8;
     }
-
-    /* 页面内容区 */
     .page-content {
       flex: 1;
       overflow-y: auto;
       padding-bottom: 70px;
     }
     .page { display: none; }
-    .page.active { display: block; }
+    .page.active { display: block; animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
     /* 报头 */
     .masthead {
@@ -37,32 +36,38 @@
       padding: 16px 0 12px;
       border-bottom: 3px double #8b4513;
       background: #faf8f3;
+      position: relative;
     }
-    .masthead-kicker {
-      font-size: 11px;
-      letter-spacing: 3px;
+    .masthead-kicker { font-size: 11px; letter-spacing: 3px; color: #8b4513; text-transform: uppercase; }
+    .masthead-title { font-size: 24px; font-weight: 700; color: #1a1a1a; letter-spacing: 4px; margin: 4px 0; }
+    .masthead-sub { font-size: 12px; color: #888; font-style: italic; }
+    .masthead-date { font-size: 12px; color: #999; margin-top: 6px; }
+    .masthead .login-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #8b4513;
+      color: #fff;
+      border: none;
+      padding: 5px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .masthead .user-label {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
       color: #8b4513;
-      text-transform: uppercase;
-    }
-    .masthead-title {
-      font-size: 24px;
-      font-weight: 700;
-      color: #1a1a1a;
-      letter-spacing: 4px;
-      margin: 4px 0;
-    }
-    .masthead-sub {
-      font-size: 12px;
-      color: #888;
-      font-style: italic;
-    }
-    .masthead-date {
-      font-size: 12px;
-      color: #999;
-      margin-top: 6px;
+      background: #f5f0e8;
+      padding: 4px 10px;
+      border-radius: 12px;
     }
 
-    /* 公告条 */
+    /* 公告 */
     .announcement-bar {
       background: #fff;
       border-left: 3px solid #8b4513;
@@ -73,417 +78,195 @@
       font-style: italic;
     }
 
-    /* 头条卡片 */
+    /* 菜品卡片 */
     .hero-card {
       background: #fff;
       margin: 0 16px 12px;
       border: 1px solid #e0d5c5;
       overflow: hidden;
     }
-    .hero-image {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      background: #f0ece4;
-      display: block;
-    }
-    .hero-body {
-      padding: 14px 16px;
-    }
-    .hero-headline {
-      font-size: 18px;
-      font-weight: 700;
-      color: #1a1a1a;
-      margin-bottom: 6px;
-      line-height: 1.4;
-    }
-    .hero-place {
-      font-size: 12px;
-      color: #888;
-      margin-bottom: 8px;
-    }
-    .hero-desc {
-      font-size: 13px;
-      color: #555;
-      margin-bottom: 10px;
-    }
-    .hero-meta {
-      display: flex;
-      gap: 12px;
-      font-size: 13px;
-    }
-    .hero-score {
-      color: #d4a017;
-      font-weight: 700;
-    }
+    .hero-image { width: 100%; height: 200px; object-fit: cover; background: #f0ece4; display: block; }
+    .hero-body { padding: 14px 16px; }
+    .hero-headline { font-size: 18px; font-weight: 700; color: #1a1a1a; margin-bottom: 6px; line-height: 1.4; }
+    .hero-place { font-size: 12px; color: #888; margin-bottom: 8px; }
+    .hero-desc { font-size: 13px; color: #555; margin-bottom: 10px; }
+    .hero-meta { display: flex; gap: 12px; font-size: 13px; align-items: center; }
+    .hero-score { color: #d4a017; font-weight: 700; }
 
-    /* 次要菜品 */
-    .sub-hero {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      padding: 0 16px;
-      margin-bottom: 12px;
-    }
-    .sub-card {
-      background: #fff;
-      border: 1px solid #e0d5c5;
-      overflow: hidden;
-    }
-    .sub-image {
-      width: 100%;
-      height: 110px;
-      object-fit: cover;
-      background: #f0ece4;
-      display: block;
-    }
-    .sub-body {
-      padding: 10px;
-    }
-    .sub-name {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-    .sub-place {
-      font-size: 11px;
-      color: #888;
-    }
-    .sub-meta {
-      display: flex;
-      gap: 8px;
-      font-size: 12px;
-      margin-top: 6px;
-    }
+    .sub-hero { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 16px; margin-bottom: 12px; }
+    .sub-card { background: #fff; border: 1px solid #e0d5c5; overflow: hidden; }
+    .sub-image { width: 100%; height: 110px; object-fit: cover; background: #f0ece4; display: block; }
+    .sub-body { padding: 10px; }
+    .sub-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .sub-place { font-size: 11px; color: #888; }
+    .sub-meta { display: flex; gap: 8px; font-size: 12px; margin-top: 6px; }
 
     /* 随机推荐 */
     .random-box {
-      background: #fff;
-      margin: 0 16px 16px;
-      padding: 16px;
-      border: 1px solid #e0d5c5;
-      text-align: center;
+      background: #fff; margin: 0 16px 16px; padding: 16px;
+      border: 1px solid #e0d5c5; text-align: center;
     }
-    .random-title {
-      font-size: 13px;
-      color: #8b4513;
-      margin-bottom: 8px;
-      font-weight: 600;
-    }
-    .random-result {
-      font-size: 16px;
-      font-weight: 700;
-      color: #1a1a1a;
-      margin-bottom: 4px;
-    }
-    .random-detail {
-      font-size: 12px;
-      color: #888;
-      margin-bottom: 12px;
-    }
-    .random-btn {
-      background: #8b4513;
-      color: #fff;
-      border: none;
-      padding: 8px 24px;
-      border-radius: 20px;
-      font-size: 14px;
-      cursor: pointer;
-    }
+    .random-title { font-size: 13px; color: #8b4513; margin-bottom: 8px; font-weight: 600; }
+    .random-result { font-size: 16px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
+    .random-detail { font-size: 12px; color: #888; margin-bottom: 12px; }
+    .random-btn { background: #8b4513; color: #fff; border: none; padding: 8px 24px; border-radius: 20px; font-size: 14px; cursor: pointer; }
     .random-btn:active { opacity: 0.8; }
 
     /* 板块标题 */
     .section-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: #8b4513;
-      margin: 20px 16px 12px;
-      padding-bottom: 6px;
-      border-bottom: 2px solid #8b4513;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      font-size: 16px; font-weight: 700; color: #8b4513;
+      margin: 20px 16px 12px; padding-bottom: 6px;
+      border-bottom: 2px solid #8b4513; display: flex; align-items: center; gap: 6px;
     }
-    .section-title::before {
-      content: '';
-      width: 3px;
-      height: 16px;
-      background: #8b4513;
-    }
+    .section-title::before { content: ''; width: 3px; height: 16px; background: #8b4513; }
 
     /* 榜单列表 */
     .dish-list { padding: 0 16px; }
     .dish-item {
-      background: #fff;
-      border: 1px solid #e0d5c5;
-      padding: 14px;
-      margin-bottom: 10px;
-      display: flex;
-      gap: 12px;
+      background: #fff; border: 1px solid #e0d5c5;
+      padding: 14px; margin-bottom: 10px; display: flex; gap: 12px; position: relative;
     }
-    .dish-item-rank {
-      font-size: 20px;
-      font-weight: 700;
-      color: #8b4513;
-      width: 32px;
-      text-align: center;
-      flex-shrink: 0;
-      line-height: 1;
-    }
+    .dish-item-rank { font-size: 20px; font-weight: 700; color: #8b4513; width: 32px; text-align: center; flex-shrink: 0; line-height: 1; }
     .dish-item-rank.top { color: #d4a017; }
-    .dish-item-image {
-      width: 70px;
-      height: 70px;
-      object-fit: cover;
-      border-radius: 4px;
-      background: #f0ece4;
-      flex-shrink: 0;
-    }
+    .dish-item-image { width: 70px; height: 70px; object-fit: cover; border-radius: 4px; background: #f0ece4; flex-shrink: 0; }
     .dish-item-info { flex: 1; }
-    .dish-item-name {
-      font-size: 15px;
-      font-weight: 600;
-      margin-bottom: 3px;
-    }
-    .dish-item-place {
-      font-size: 11px;
-      color: #888;
-      margin-bottom: 4px;
-    }
-    .dish-item-desc {
-      font-size: 12px;
-      color: #666;
-      margin-bottom: 6px;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    .dish-item-meta {
-      display: flex;
-      gap: 10px;
-      font-size: 12px;
-    }
+    .dish-item-name { font-size: 15px; font-weight: 600; margin-bottom: 3px; display: flex; justify-content: space-between; }
+    .dish-item-place { font-size: 11px; color: #888; margin-bottom: 4px; }
+    .dish-item-desc { font-size: 12px; color: #666; margin-bottom: 6px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .dish-item-meta { display: flex; gap: 10px; font-size: 12px; align-items: center; flex-wrap: wrap; }
 
-    /* 搜索框 */
-    .search-box {
-      padding: 10px 16px;
-      position: sticky;
-      top: 0;
-      background: #f5f0e8;
-      z-index: 10;
+    /* 收藏心形 */
+    .favorite-btn {
+      font-size: 20px; cursor: pointer; color: #ccc; user-select: none;
+      position: absolute; right: 12px; top: 12px;
     }
-    .search-input {
-      width: 100%;
-      padding: 10px 14px;
-      border: 1px solid #d0c8b8;
-      border-radius: 20px;
-      font-size: 14px;
-      background: #fff;
-      outline: none;
-    }
+    .favorite-btn.active { color: #e74c3c; }
+
+    /* 评分星星 */
+    .star-rating { display: flex; gap: 4px; }
+    .star { font-size: 18px; cursor: pointer; color: #ddd; }
+    .star.active { color: #d4a017; }
+
+    /* 搜索 */
+    .search-box { padding: 10px 16px; position: sticky; top: 0; background: #f5f0e8; z-index: 10; }
+    .search-input { width: 100%; padding: 10px 14px; border: 1px solid #d0c8b8; border-radius: 20px; font-size: 14px; background: #fff; outline: none; }
     .search-input:focus { border-color: #8b4513; }
 
     /* 分类标签 */
-    .category-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      padding: 0 16px;
-      margin-bottom: 12px;
-    }
+    .category-tags { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 16px; margin-bottom: 12px; }
     .category-tag {
-      background: #fff;
-      border: 1px solid #d0c8b8;
-      color: #8b4513;
-      padding: 6px 14px;
-      border-radius: 16px;
-      font-size: 13px;
-      cursor: pointer;
+      background: #fff; border: 1px solid #d0c8b8; color: #8b4513;
+      padding: 6px 14px; border-radius: 16px; font-size: 13px; cursor: pointer;
     }
-    .category-tag.active {
-      background: #8b4513;
-      color: #fff;
-      border-color: #8b4513;
-    }
+    .category-tag.active { background: #8b4513; color: #fff; border-color: #8b4513; }
 
     /* 投稿表单 */
-    .form-page {
-      padding: 16px;
-    }
-    .form-group {
-      margin-bottom: 16px;
-    }
-    .form-label {
-      font-size: 14px;
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 6px;
-      display: block;
-    }
-    .form-input, .form-textarea {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #d0c8b8;
-      border-radius: 6px;
-      font-size: 14px;
-      background: #fff;
-      outline: none;
-    }
+    .form-page { padding: 16px; }
+    .form-group { margin-bottom: 16px; }
+    .form-label { font-size: 14px; font-weight: 600; color: #333; margin-bottom: 6px; display: block; }
+    .form-input, .form-textarea { width: 100%; padding: 10px 12px; border: 1px solid #d0c8b8; border-radius: 6px; font-size: 14px; background: #fff; outline: none; }
     .form-input:focus, .form-textarea:focus { border-color: #8b4513; }
     .form-textarea { min-height: 80px; resize: vertical; }
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    .form-submit {
-      width: 100%;
-      padding: 12px;
-      background: #8b4513;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 8px;
-    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .form-submit { width: 100%; padding: 12px; background: #8b4513; color: #fff; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 8px; }
     .form-submit:active { opacity: 0.9; }
+    .form-submit:disabled { background: #ccc; cursor: not-allowed; }
 
     /* 我的页面 */
-    .profile-page {
-      padding: 16px;
-    }
+    .profile-page { padding: 16px; }
     .profile-card {
-      background: #fff;
-      border: 1px solid #e0d5c5;
-      padding: 24px;
-      text-align: center;
-      margin-bottom: 16px;
+      background: #fff; border: 1px solid #e0d5c5;
+      padding: 24px; text-align: center; margin-bottom: 16px;
     }
     .profile-avatar {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      background: #f0ece4;
-      margin: 0 auto 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 64px; height: 64px; border-radius: 50%; background: #f0ece4;
+      margin: 0 auto 12px; display: flex; align-items: center; justify-content: center;
       font-size: 28px;
     }
-    .profile-name {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-    .profile-id {
-      font-size: 12px;
-      color: #888;
-    }
-    .info-card {
-      background: #fff;
-      border: 1px solid #e0d5c5;
-      padding: 16px;
-      margin-bottom: 12px;
-    }
-    .info-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: #8b4513;
-      margin-bottom: 10px;
-      padding-bottom: 6px;
-      border-bottom: 1px solid #f0ece4;
-    }
-    .info-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px 0;
-      font-size: 13px;
-      border-bottom: 1px solid #f8f5f0;
-    }
+    .profile-name { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+    .profile-id { font-size: 12px; color: #888; }
+    .info-card { background: #fff; border: 1px solid #e0d5c5; padding: 16px; margin-bottom: 12px; }
+    .info-title { font-size: 14px; font-weight: 600; color: #8b4513; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #f0ece4; }
+    .info-item { display: flex; justify-content: space-between; padding: 8px 0; font-size: 13px; border-bottom: 1px solid #f8f5f0; }
     .info-item:last-child { border-bottom: none; }
     .info-label { color: #888; }
     .info-value { color: #333; font-weight: 500; }
+    .btn { background: #8b4513; color: #fff; border: none; padding: 10px 20px; border-radius: 6px; font-size: 14px; cursor: pointer; width: 100%; margin-top: 8px; }
+    .btn.secondary { background: #fff; color: #8b4513; border: 1px solid #8b4513; }
+    .btn.danger { background: #c0392b; }
 
     /* 底部导航 */
     .tab-bar {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 480px;
-      background: #fff;
-      border-top: 1px solid #e0d5c5;
-      display: flex;
-      justify-content: space-around;
-      padding: 6px 0 10px;
-      z-index: 100;
+      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 480px; background: #fff;
+      border-top: 1px solid #e0d5c5; display: flex; justify-content: space-around;
+      padding: 6px 0 10px; z-index: 100;
     }
-    .tab-item {
-      flex: 1;
-      text-align: center;
-      cursor: pointer;
-      padding: 4px 0;
-      color: #999;
-      font-size: 11px;
-      transition: color 0.2s;
-    }
+    .tab-item { flex: 1; text-align: center; cursor: pointer; padding: 4px 0; color: #999; font-size: 11px; transition: color 0.2s; }
     .tab-item.active { color: #8b4513; }
-    .tab-icon {
-      font-size: 22px;
-      line-height: 1;
-      margin-bottom: 2px;
-      display: block;
+    .tab-icon { font-size: 22px; line-height: 1; margin-bottom: 2px; display: block; }
+
+    /* 弹窗 */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5); z-index: 300;
+      display: none; align-items: center; justify-content: center;
     }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: #fff; border-radius: 12px; width: 90%; max-width: 360px;
+      max-height: 80vh; overflow-y: auto; padding: 24px;
+    }
+    .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; text-align: center; }
+    .modal-close { position: absolute; right: 16px; top: 16px; font-size: 24px; cursor: pointer; color: #999; }
+    .modal-tabs { display: flex; margin-bottom: 16px; border-bottom: 1px solid #eee; }
+    .modal-tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; font-size: 14px; color: #888; }
+    .modal-tab.active { color: #8b4513; border-bottom: 2px solid #8b4513; }
 
     /* Toast */
     .toast {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(0,0,0,0.75);
-      color: #fff;
-      padding: 12px 24px;
-      border-radius: 6px;
-      font-size: 14px;
-      z-index: 200;
-      display: none;
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      background: rgba(0,0,0,0.75); color: #fff;
+      padding: 12px 24px; border-radius: 6px; font-size: 14px;
+      z-index: 200; display: none;
     }
     .toast.show { display: block; }
 
-    /* 加载状态 */
     .loading { text-align: center; padding: 40px; color: #999; font-size: 13px; }
     .empty { text-align: center; padding: 40px; color: #999; font-size: 13px; }
 
-    /* 页面切换动画 */
-    .page {
-      animation: fadeIn 0.2s ease;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    /* 管理员后台 */
+    .admin-panel { padding: 16px; }
+    .admin-card { background: #fff; border: 1px solid #e0d5c5; padding: 16px; margin-bottom: 12px; }
+    .admin-dish { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f8f5f0; }
+    .admin-dish:last-child { border-bottom: none; }
+    .admin-dish-name { font-size: 14px; font-weight: 500; }
+    .admin-dish-status { font-size: 11px; padding: 2px 8px; border-radius: 8px; }
+    .status-pending { background: #fff3cd; color: #856404; }
+    .status-active { background: #d4edda; color: #155724; }
+    .admin-actions { display: flex; gap: 8px; }
+    .admin-actions button { padding: 4px 10px; font-size: 12px; border: none; border-radius: 4px; cursor: pointer; }
+    .btn-approve { background: #28a745; color: #fff; }
+    .btn-reject { background: #dc3545; color: #fff; }
+
+    /* 返回按钮 */
+    .back-bar { padding: 10px 16px; background: #faf8f3; border-bottom: 1px solid #e0d5c5; display: flex; align-items: center; gap: 8px; }
+    .back-bar button { background: none; border: none; color: #8b4513; font-size: 14px; cursor: pointer; }
   </style>
 </head>
 <body>
   <div class="app">
-    <div class="page-content">
+    <div class="page-content" id="pageContent">
       <!-- 首页 -->
       <div class="page active" id="page-home">
-        <div class="masthead" id="masthead">
+        <div class="masthead" id="homeMasthead">
           <div class="masthead-kicker">Campus Dining Daily</div>
           <div class="masthead-title">明天吃什么日报</div>
           <div class="masthead-sub">北京信息科技大学食堂风味指南</div>
           <div class="masthead-date" id="homeDate">加载中...</div>
         </div>
         <div class="announcement-bar" id="homeAnnouncement">正在获取公告...</div>
-
         <div id="heroSection">加载中...</div>
-
         <div class="random-box">
           <div class="random-title">不知道吃什么？</div>
           <div class="random-result" id="randomName">点击下方按钮</div>
@@ -511,9 +294,7 @@
         </div>
         <div class="category-tags" id="categoryTags" style="padding:16px"></div>
         <div class="section-title">该分类下的菜品</div>
-        <div class="dish-list" id="categoryList">
-          <div class="empty">点击上方分类查看菜品</div>
-        </div>
+        <div class="dish-list" id="categoryList"><div class="empty">点击上方分类查看菜品</div></div>
       </div>
 
       <!-- 投稿 -->
@@ -544,7 +325,7 @@
             <label class="form-label">一句描述</label>
             <textarea class="form-textarea" id="submitDesc" placeholder="口味、份量、适合什么时候吃"></textarea>
           </div>
-          <button class="form-submit" onclick="submitDish()">提交投稿</button>
+          <button class="form-submit" id="submitBtn" onclick="submitDish()">提交投稿</button>
         </div>
       </div>
 
@@ -553,86 +334,101 @@
         <div class="masthead">
           <div class="masthead-title" style="font-size:20px">我的</div>
         </div>
-        <div class="profile-page">
-          <div class="profile-card">
-            <div class="profile-avatar">&#128100;</div>
-            <div class="profile-name">访客用户</div>
-            <div class="profile-id">Web 端浏览模式</div>
+        <div class="profile-page" id="profileContent"></div>
+      </div>
+
+      <!-- 管理员后台 -->
+      <div class="page" id="page-admin">
+        <div class="back-bar">
+          <button onclick="switchTab('home')">&#8592; 返回</button>
+          <span style="font-weight:600">管理员后台</span>
+        </div>
+        <div class="admin-panel" id="adminPanel">
+          <div class="admin-card">
+            <div class="info-title">待审核菜品</div>
+            <div id="adminDishes">加载中...</div>
           </div>
-          <div class="info-card">
-            <div class="info-title">项目信息</div>
-            <div class="info-item">
-              <span class="info-label">项目名称</span>
-              <span class="info-value">明天吃什么日报</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">学校</span>
-              <span class="info-value">北京信息科技大学</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">版本</span>
-              <span class="info-value">Web 演示版</span>
-            </div>
+          <div class="admin-card">
+            <div class="info-title">设置公告</div>
+            <textarea class="form-textarea" id="adminAnnouncement" placeholder="输入公告内容..."></textarea>
+            <button class="btn" onclick="setAnnouncement()">保存公告</button>
           </div>
-          <div class="info-card">
-            <div class="info-title">功能说明</div>
-            <div class="info-item">
-              <span class="info-label">榜单</span>
-              <span class="info-value">查看同学评分排行</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">分类</span>
-              <span class="info-value">按类别浏览菜品</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">投稿</span>
-              <span class="info-value">提交你发现的好味道</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">评分</span>
-              <span class="info-value">小程序端支持打分</span>
-            </div>
-          </div>
-          <div class="info-card">
-            <div class="info-title">技术栈</div>
-            <div class="info-item">
-              <span class="info-label">前端</span>
-              <span class="info-value">微信小程序</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">后端</span>
-              <span class="info-value">Express + SQLite</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">部署</span>
-              <span class="info-value">Render</span>
-            </div>
+          <div class="admin-card">
+            <div class="info-title">创建分类</div>
+            <input type="text" class="form-input" id="adminCategoryName" placeholder="分类名称">
+            <button class="btn" onclick="createCategory()">创建分类</button>
           </div>
         </div>
       </div>
     </div>
 
     <!-- 底部导航 -->
-    <div class="tab-bar">
+    <div class="tab-bar" id="tabBar">
       <div class="tab-item active" onclick="switchTab('home')">
-        <span class="tab-icon">&#128240;</span>
-        <span>首页</span>
+        <span class="tab-icon">&#128240;</span><span>首页</span>
       </div>
       <div class="tab-item" onclick="switchTab('ranking')">
-        <span class="tab-icon">&#127942;</span>
-        <span>榜单</span>
+        <span class="tab-icon">&#127942;</span><span>榜单</span>
       </div>
       <div class="tab-item" onclick="switchTab('category')">
-        <span class="tab-icon">&#128451;</span>
-        <span>分类</span>
+        <span class="tab-icon">&#128451;</span><span>分类</span>
       </div>
       <div class="tab-item" onclick="switchTab('submit')">
-        <span class="tab-icon">&#9998;</span>
-        <span>投稿</span>
+        <span class="tab-icon">&#9998;</span><span>投稿</span>
       </div>
       <div class="tab-item" onclick="switchTab('profile')">
-        <span class="tab-icon">&#128100;</span>
-        <span>我的</span>
+        <span class="tab-icon">&#128100;</span><span>我的</span>
+      </div>
+    </div>
+
+    <!-- 登录弹窗 -->
+    <div class="modal-overlay" id="loginModal">
+      <div class="modal" style="position:relative">
+        <div class="modal-close" onclick="closeModal('loginModal')">&times;</div>
+        <div class="modal-title" id="loginModalTitle">登录</div>
+        <div class="modal-tabs">
+          <div class="modal-tab active" onclick="switchLoginTab('login')" id="tab-login">登录</div>
+          <div class="modal-tab" onclick="switchLoginTab('register')" id="tab-register">注册</div>
+        </div>
+        <div id="loginForm">
+          <div class="form-group">
+            <label class="form-label">用户名</label>
+            <input type="text" class="form-input" id="loginUsername" placeholder="用户名">
+          </div>
+          <div class="form-group">
+            <label class="form-label">密码</label>
+            <input type="password" class="form-input" id="loginPassword" placeholder="密码">
+          </div>
+          <button class="form-submit" onclick="doLogin()">登录</button>
+        </div>
+        <div id="registerForm" style="display:none">
+          <div class="form-group">
+            <label class="form-label">用户名</label>
+            <input type="text" class="form-input" id="regUsername" placeholder="用户名">
+          </div>
+          <div class="form-group">
+            <label class="form-label">密码</label>
+            <input type="password" class="form-input" id="regPassword" placeholder="至少4位">
+          </div>
+          <div class="form-group">
+            <label class="form-label">昵称</label>
+            <input type="text" class="form-input" id="regNickname" placeholder="显示名称">
+          </div>
+          <button class="form-submit" onclick="doRegister()">注册</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 管理员登录弹窗 -->
+    <div class="modal-overlay" id="adminModal">
+      <div class="modal" style="position:relative">
+        <div class="modal-close" onclick="closeModal('adminModal')">&times;</div>
+        <div class="modal-title">管理员登录</div>
+        <div class="form-group">
+          <label class="form-label">管理密码</label>
+          <input type="password" class="form-input" id="adminPassword" placeholder="输入管理密码">
+        </div>
+        <button class="form-submit" onclick="doAdminLogin()">登录后台</button>
       </div>
     </div>
 
@@ -640,11 +436,16 @@
   </div>
 
   <script>
-    // ============ 数据 ============
+    // ============ 全局状态 ============
     let allDishes = [];
     let allCategories = [];
     let canteenData = [];
     let currentCategory = '';
+    let currentUser = null;
+    let favoriteIds = new Set();
+    let adminToken = localStorage.getItem('adminToken') || null;
+    let adminTapCount = 0;
+    let adminTapTimer = 0;
 
     // ============ 工具函数 ============
     function $(id) { return document.getElementById(id); }
@@ -665,8 +466,14 @@
       return `${y}.${m}.${d} ${week}`;
     }
 
-    async function fetchJSON(url) {
-      const res = await fetch(url);
+    async function fetchJSON(url, options = {}) {
+      const token = currentUser?.token;
+      if (token && !options.headers) {
+        options.headers = { 'x-user-token': token };
+      } else if (token) {
+        options.headers = { ...options.headers, 'x-user-token': token };
+      }
+      const res = await fetch(url, options);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       if (!data.success) throw new Error(data.message || '请求失败');
@@ -683,32 +490,197 @@
       return url;
     }
 
+    // ============ 登录状态 ============
+    function loadUser() {
+      const saved = localStorage.getItem('currentUser');
+      if (saved) {
+        try { currentUser = JSON.parse(saved); } catch(e) { currentUser = null; }
+      }
+      updateLoginUI();
+    }
+
+    function saveUser(user) {
+      currentUser = user;
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      updateLoginUI();
+    }
+
+    function logout() {
+      currentUser = null;
+      favoriteIds = new Set();
+      localStorage.removeItem('currentUser');
+      updateLoginUI();
+      renderProfile();
+      showToast('已退出登录');
+    }
+
+    function updateLoginUI() {
+      const masthead = $('homeMasthead');
+      const existing = masthead.querySelector('.login-btn, .user-label');
+      if (existing) existing.remove();
+
+      const el = document.createElement('span');
+      if (currentUser) {
+        el.className = 'user-label';
+        el.textContent = currentUser.nickname;
+      } else {
+        el.className = 'login-btn';
+        el.textContent = '登录';
+        el.onclick = (e) => { e.stopPropagation(); openModal('loginModal'); };
+      }
+      masthead.appendChild(el);
+    }
+
+    // ============ 弹窗 ============
+    function openModal(id) { $(id).classList.add('show'); }
+    function closeModal(id) { $(id).classList.remove('show'); }
+
+    function switchLoginTab(tab) {
+      document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+      $('tab-' + tab).classList.add('active');
+      $('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+      $('registerForm').style.display = tab === 'register' ? 'block' : 'none';
+      $('loginModalTitle').textContent = tab === 'login' ? '登录' : '注册';
+    }
+
+    // ============ 登录/注册 ============
+    async function doLogin() {
+      const username = $('loginUsername').value.trim();
+      const password = $('loginPassword').value;
+      if (!username || !password) { showToast('请填写用户名和密码'); return; }
+      try {
+        const data = await fetchJSON('/api/webLogin', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        saveUser(data);
+        closeModal('loginModal');
+        showToast('登录成功');
+        loadFavorites();
+        renderProfile();
+      } catch (err) {
+        showToast(err.message);
+      }
+    }
+
+    async function doRegister() {
+      const username = $('regUsername').value.trim();
+      const password = $('regPassword').value;
+      const nickname = $('regNickname').value.trim() || username;
+      if (!username || !password) { showToast('请填写用户名和密码'); return; }
+      if (password.length < 4) { showToast('密码至少4位'); return; }
+      try {
+        const data = await fetchJSON('/api/webRegister', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ username, password, nickname })
+        });
+        saveUser(data);
+        closeModal('loginModal');
+        showToast('注册成功');
+        renderProfile();
+      } catch (err) {
+        showToast(err.message);
+      }
+    }
+
+    // ============ 收藏 ============
+    async function loadFavorites() {
+      if (!currentUser) return;
+      try {
+        const ids = await fetchJSON('/api/favorites');
+        favoriteIds = new Set(ids);
+        renderRanking(allDishes);
+        renderProfile();
+      } catch (e) {}
+    }
+
+    async function toggleFavorite(dishId) {
+      if (!currentUser) { openModal('loginModal'); return; }
+      const id = String(dishId);
+      try {
+        if (favoriteIds.has(id)) {
+          await fetchJSON('/api/removeFavorite', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ dishId: id })
+          });
+          favoriteIds.delete(id);
+          showToast('已取消收藏');
+        } else {
+          await fetchJSON('/api/addFavorite', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ dishId: id })
+          });
+          favoriteIds.add(id);
+          showToast('已收藏');
+        }
+        renderRanking(allDishes);
+        renderProfile();
+      } catch (err) {
+        showToast(err.message);
+      }
+    }
+
+    // ============ 评分 ============
+    async function rateDish(dishId, score) {
+      if (!currentUser) { openModal('loginModal'); return; }
+      try {
+        await fetchJSON('/api/rateDish', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ dishId: String(dishId), score })
+        });
+        showToast(`评分 ${score} 星成功`);
+        await reloadDishes();
+      } catch (err) {
+        showToast(err.message);
+      }
+    }
+
+    async function reloadDishes() {
+      try {
+        allDishes = await fetchJSON('/api/rankings?schoolId=bistu&limit=20').catch(() => []);
+        renderHome();
+        renderRanking(allDishes);
+      } catch (e) {}
+    }
+
     // ============ 页面切换 ============
     function switchTab(tab) {
+      if (tab === 'admin' && !adminToken) { openModal('adminModal'); return; }
+
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-      $(`page-${tab}`).classList.add('active');
-      event.currentTarget.classList.add('active');
 
+      const tabBar = $('tabBar');
+      if (tab === 'admin') {
+        tabBar.style.display = 'none';
+      } else {
+        tabBar.style.display = 'flex';
+        const tabEls = tabBar.querySelectorAll('.tab-item');
+        const tabMap = { home: 0, ranking: 1, category: 2, submit: 3, profile: 4 };
+        if (tabMap[tab] !== undefined) tabEls[tabMap[tab]].classList.add('active');
+      }
+
+      $(`page-${tab}`).classList.add('active');
       if (tab === 'ranking' && allDishes.length) renderRanking(allDishes);
       if (tab === 'category' && allCategories.length) renderCategoryTags();
+      if (tab === 'profile') renderProfile();
+      if (tab === 'admin') renderAdmin();
     }
 
     // ============ 首页渲染 ============
     function renderHome() {
       $('homeDate').textContent = formatDate();
-
       if (!allDishes.length) {
         $('heroSection').innerHTML = '<div class="loading">暂无数据</div>';
         return;
       }
-
-      const [lead, feature, third, ...rest] = allDishes;
-      const top3 = [lead, feature, third].filter(Boolean);
-
+      const [lead, feature, third] = allDishes;
       let html = '';
-
-      // 头条
       if (lead) {
         const place = [lead.canteenName, lead.floorName, lead.shopName].filter(Boolean).join(' · ');
         html += `
@@ -724,11 +696,8 @@
                 <span class="category-tag">${lead.categoryName || '未分类'}</span>
               </div>
             </div>
-          </div>
-        `;
+          </div>`;
       }
-
-      // 次要
       if (feature || third) {
         html += '<div class="sub-hero">';
         [feature, third].filter(Boolean).forEach(d => {
@@ -744,31 +713,20 @@
                   <span>${d.ratingCount || 0}人</span>
                 </div>
               </div>
-            </div>
-          `;
+            </div>`;
         });
         html += '</div>';
       }
-
       $('heroSection').innerHTML = html;
     }
 
     // ============ 随机推荐 ============
     function rollRandom() {
-      if (!canteenData.length) {
-        showToast('暂无食堂数据');
-        return;
-      }
+      if (!canteenData.length) { showToast('暂无食堂数据'); return; }
       const canteen = canteenData[Math.floor(Math.random() * canteenData.length)];
-      if (!canteen.floors || !canteen.floors.length) {
-        showToast('暂无窗口数据');
-        return;
-      }
+      if (!canteen.floors || !canteen.floors.length) { showToast('暂无窗口数据'); return; }
       const floor = canteen.floors[Math.floor(Math.random() * canteen.floors.length)];
-      if (!floor.shops || !floor.shops.length) {
-        showToast('暂无窗口数据');
-        return;
-      }
+      if (!floor.shops || !floor.shops.length) { showToast('暂无窗口数据'); return; }
       const shop = floor.shops[Math.floor(Math.random() * floor.shops.length)];
       $('randomName').textContent = shop;
       $('randomPlace').textContent = `${canteen.name} · ${floor.name}`;
@@ -777,35 +735,42 @@
     // ============ 榜单 ============
     function renderRanking(dishes) {
       const keyword = ($('searchInput').value || '').trim().toLowerCase();
-      const filtered = keyword
-        ? dishes.filter(d => (d.name || '').toLowerCase().includes(keyword))
-        : dishes;
+      const filtered = keyword ? dishes.filter(d => (d.name || '').toLowerCase().includes(keyword)) : dishes;
+      const catFiltered = currentCategory ? filtered.filter(d => d.categoryName === currentCategory) : filtered;
 
-      if (!filtered.length) {
+      if (!catFiltered.length) {
         $('rankingList').innerHTML = '<div class="empty">没有找到匹配的菜品</div>';
         return;
       }
+      $('rankingList').innerHTML = catFiltered.map((d, i) => dishItemHTML(d, i + 1)).join('');
+    }
 
-      $('rankingList').innerHTML = filtered.map((d, i) => {
-        const place = [d.canteenName, d.floorName, d.shopName].filter(Boolean).join(' · ');
-        const rankClass = i < 3 ? 'top' : '';
-        return `
-          <div class="dish-item">
-            <div class="dish-item-rank ${rankClass}">${i + 1}</div>
-            <img class="dish-item-image" src="${resolveImg(d.imageUrl)}" alt="${d.name}" onerror="this.src='${getPlaceholderImg()}'">
-            <div class="dish-item-info">
-              <div class="dish-item-name">${d.name}</div>
-              <div class="dish-item-place">${place || '校园食堂'}</div>
-              <div class="dish-item-desc">${d.description || '等待同学补充风味记录。'}</div>
-              <div class="dish-item-meta">
-                <span class="hero-score">★ ${Number(d.avgScore || 0).toFixed(1)}</span>
-                <span>${d.ratingCount || 0} 人评价</span>
-                <span class="category-tag">${d.categoryName || '未分类'}</span>
-              </div>
+    function dishItemHTML(d, rank) {
+      const place = [d.canteenName, d.floorName, d.shopName].filter(Boolean).join(' · ');
+      const rankClass = rank <= 3 ? 'top' : '';
+      const isFav = favoriteIds.has(String(d.id));
+      return `
+        <div class="dish-item">
+          <div class="dish-item-rank ${rankClass}">${rank}</div>
+          <img class="dish-item-image" src="${resolveImg(d.imageUrl)}" alt="${d.name}" onerror="this.src='${getPlaceholderImg()}'">
+          <div class="dish-item-info">
+            <div class="dish-item-name">
+              <span>${d.name}</span>
+            </div>
+            <div class="dish-item-place">${place || '校园食堂'}</div>
+            <div class="dish-item-desc">${d.description || '等待同学补充风味记录。'}</div>
+            <div class="dish-item-meta">
+              <span class="hero-score">★ ${Number(d.avgScore || 0).toFixed(1)}</span>
+              <span>${d.ratingCount || 0} 人评价</span>
+              <span class="category-tag">${d.categoryName || '未分类'}</span>
+            </div>
+            <div class="dish-item-meta" style="margin-top:6px">
+              ${[1,2,3,4,5].map(s => `<span class="star ${s <= Math.round(d.avgScore || 0) ? 'active' : ''}" onclick="rateDish('${d.id}', ${s})">★</span>`).join('')}
+              <span style="font-size:11px;color:#999;margin-left:4px">点击星星评分</span>
             </div>
           </div>
-        `;
-      }).join('');
+          <span class="favorite-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite('${d.id}')">${isFav ? '&#10084;' : '&#9825;'}</span>
+        </div>`;
     }
 
     function filterRanking() {
@@ -822,8 +787,7 @@
     function filterByCategory(cat) {
       currentCategory = cat;
       renderRankingTags();
-      const filtered = cat ? allDishes.filter(d => d.categoryName === cat) : allDishes;
-      renderRanking(filtered);
+      renderRanking(allDishes);
     }
 
     // ============ 分类页 ============
@@ -839,38 +803,203 @@
         $('categoryList').innerHTML = '<div class="empty">该分类下暂无菜品</div>';
         return;
       }
-      $('categoryList').innerHTML = filtered.map((d, i) => {
-        const place = [d.canteenName, d.floorName, d.shopName].filter(Boolean).join(' · ');
-        return `
-          <div class="dish-item">
-            <div class="dish-item-rank">${i + 1}</div>
-            <img class="dish-item-image" src="${resolveImg(d.imageUrl)}" alt="${d.name}" onerror="this.src='${getPlaceholderImg()}'">
-            <div class="dish-item-info">
-              <div class="dish-item-name">${d.name}</div>
-              <div class="dish-item-place">${place || '校园食堂'}</div>
-              <div class="dish-item-desc">${d.description || ''}</div>
-              <div class="dish-item-meta">
-                <span class="hero-score">★ ${Number(d.avgScore || 0).toFixed(1)}</span>
-                <span>${d.ratingCount || 0} 人评价</span>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
+      $('categoryList').innerHTML = filtered.map((d, i) => dishItemHTML(d, i + 1)).join('');
     }
 
     // ============ 投稿 ============
     async function submitDish() {
+      if (!currentUser) { openModal('loginModal'); return; }
       const name = $('submitName').value.trim();
-      if (!name) {
-        showToast('请填写菜品名称');
+      if (!name) { showToast('请填写菜品名称'); return; }
+
+      const btn = $('submitBtn');
+      btn.disabled = true;
+      btn.textContent = '提交中...';
+
+      try {
+        await fetchJSON('/api/createDish', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            schoolId: 'bistu',
+            name,
+            categoryName: $('submitCategory').value.trim(),
+            description: $('submitDesc').value.trim(),
+            shopName: $('submitShop').value.trim(),
+            floorName: $('submitFloor').value.trim(),
+          })
+        });
+        showToast('投稿成功，等待审核');
+        $('submitName').value = '';
+        $('submitCategory').value = '';
+        $('submitDesc').value = '';
+        $('submitShop').value = '';
+        $('submitFloor').value = '';
+      } catch (err) {
+        showToast(err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '提交投稿';
+      }
+    }
+
+    // ============ 我的页面 ============
+    function renderProfile() {
+      const container = $('profileContent');
+      if (!currentUser) {
+        container.innerHTML = `
+          <div class="profile-card">
+            <div class="profile-avatar">&#128100;</div>
+            <div class="profile-name">未登录</div>
+            <div class="profile-id">登录后可收藏菜品和投稿</div>
+            <button class="btn" onclick="openModal('loginModal')">登录 / 注册</button>
+          </div>
+          <div class="info-card">
+            <div class="info-title">项目信息</div>
+            <div class="info-item"><span class="info-label">项目名称</span><span class="info-value">明天吃什么日报</span></div>
+            <div class="info-item"><span class="info-label">学校</span><span class="info-value">北京信息科技大学</span></div>
+          </div>`;
         return;
       }
-      showToast('投稿功能请在微信小程序中使用');
+
+      const favDishes = allDishes.filter(d => favoriteIds.has(String(d.id)));
+      let favHtml = '';
+      if (favDishes.length) {
+        favHtml = `<div class="section-title">我的收藏 (${favDishes.length})</div><div class="dish-list">${favDishes.map((d, i) => dishItemHTML(d, i + 1)).join('')}</div>`;
+      } else {
+        favHtml = `<div class="section-title">我的收藏</div><div class="empty">暂无收藏菜品</div>`;
+      }
+
+      container.innerHTML = `
+        <div class="profile-card">
+          <div class="profile-avatar">&#128100;</div>
+          <div class="profile-name">${currentUser.nickname}</div>
+          <div class="profile-id">@${currentUser.username}</div>
+        </div>
+        ${favHtml}
+        <div style="padding:0 16px">
+          <button class="btn secondary" onclick="logout()">退出登录</button>
+        </div>
+        <div class="info-card" style="margin:16px">
+          <div class="info-title">项目信息</div>
+          <div class="info-item"><span class="info-label">项目名称</span><span class="info-value">明天吃什么日报</span></div>
+          <div class="info-item"><span class="info-label">学校</span><span class="info-value">北京信息科技大学</span></div>
+          <div class="info-item"><span class="info-label">版本</span><span class="info-value">Web 完整版</span></div>
+        </div>`;
+    }
+
+    // ============ 管理员 ============
+    $('homeMasthead').addEventListener('click', () => {
+      if (adminTapTimer) clearTimeout(adminTapTimer);
+      adminTapCount++;
+      if (adminTapCount >= 6) {
+        adminTapCount = 0;
+        openModal('adminModal');
+        return;
+      }
+      adminTapTimer = setTimeout(() => { adminTapCount = 0; }, 1400);
+    });
+
+    async function doAdminLogin() {
+      const password = $('adminPassword').value;
+      if (!password) { showToast('请输入密码'); return; }
+      try {
+        const data = await fetchJSON('/api/adminLogin', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ password })
+        });
+        adminToken = data.token;
+        localStorage.setItem('adminToken', adminToken);
+        closeModal('adminModal');
+        showToast('管理员登录成功');
+        switchTab('admin');
+      } catch (err) {
+        showToast(err.message);
+      }
+    }
+
+    async function renderAdmin() {
+      if (!adminToken) { switchTab('home'); return; }
+      try {
+        const dishes = await fetchJSON('/api/dishes?schoolId=bistu&includeOffline=true', {
+          headers: { 'x-user-token': adminToken }
+        });
+        const pending = dishes.filter(d => d.status === 'PENDING');
+        if (!pending.length) {
+          $('adminDishes').innerHTML = '<div class="empty">暂无待审核菜品</div>';
+        } else {
+          $('adminDishes').innerHTML = pending.map(d => `
+            <div class="admin-dish">
+              <div>
+                <div class="admin-dish-name">${d.name}</div>
+                <div style="font-size:11px;color:#888">${d.categoryName || '未分类'} · ${d.shopName || '未知窗口'}</div>
+              </div>
+              <div class="admin-actions">
+                <button class="btn-approve" onclick="updateDishStatus('${d.id}', 'ACTIVE')">通过</button>
+                <button class="btn-reject" onclick="updateDishStatus('${d.id}', 'OFFLINE')">拒绝</button>
+              </div>
+            </div>
+          `).join('');
+        }
+      } catch (err) {
+        $('adminDishes').innerHTML = '<div class="error">加载失败</div>';
+      }
+    }
+
+    async function updateDishStatus(dishId, status) {
+      try {
+        await fetchJSON('/api/updateDish', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ token: adminToken, dishId, patch: { status } })
+        });
+        showToast(status === 'ACTIVE' ? '已通过' : '已拒绝');
+        renderAdmin();
+        reloadDishes();
+      } catch (err) {
+        showToast(err.message);
+      }
+    }
+
+    async function setAnnouncement() {
+      const content = $('adminAnnouncement').value.trim();
+      if (!content) { showToast('请输入公告内容'); return; }
+      try {
+        await fetchJSON('/api/setAnnouncement', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ token: adminToken, schoolId: 'bistu', content })
+        });
+        showToast('公告已更新');
+        $('adminAnnouncement').value = '';
+      } catch (err) {
+        showToast(err.message);
+      }
+    }
+
+    async function createCategory() {
+      const name = $('adminCategoryName').value.trim();
+      if (!name) { showToast('请输入分类名称'); return; }
+      try {
+        await fetchJSON('/api/createCategory', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ token: adminToken, schoolId: 'bistu', name })
+        });
+        showToast('分类创建成功');
+        $('adminCategoryName').value = '';
+        await init();
+      } catch (err) {
+        showToast(err.message);
+      }
     }
 
     // ============ 初始化 ============
     async function init() {
+      loadUser();
+      $('homeDate').textContent = formatDate();
+
       try {
         const [dishes, announcement, categories, canteens] = await Promise.all([
           fetchJSON('/api/rankings?schoolId=bistu&limit=20').catch(() => []),
@@ -878,7 +1007,6 @@
           fetchJSON('/api/categories?schoolId=bistu').catch(() => []),
           fetchJSON('/api/canteenData?schoolId=bistu').catch(() => []),
         ]);
-
         allDishes = dishes || [];
         allCategories = categories || [];
         canteenData = canteens || [];
@@ -887,9 +1015,12 @@
         renderHome();
         renderRankingTags();
         renderCategoryTags();
+        if (currentUser) {
+          await loadFavorites();
+        }
+        renderProfile();
       } catch (err) {
         $('homeAnnouncement').textContent = '加载失败，请刷新重试';
-        $('heroSection').innerHTML = '<div class="loading">加载失败</div>';
       }
     }
 
