@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/newspaper/index",
+    "pages/favorites/index",
     "pages/admin/index",
     "pages/auth/register/index"
   ],
