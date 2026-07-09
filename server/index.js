@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const sqlite3 = require('sqlite3').verbose()
 const crypto = require('crypto')
+const path = require('path')
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -402,6 +403,11 @@ app.post('/api/createCategory', async (req, res) => {
       res.json(ok({ id: String(this.lastID), name }))
     })
   })
+})
+
+// 首页 - 展示页面
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'))
 })
 
 // 健康检查

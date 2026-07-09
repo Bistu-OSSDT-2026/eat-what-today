@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>明天吃什么日报</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #f5f0e8;
+      color: #2c2c2c;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header {
+      text-align: center;
+      padding: 40px 0 30px;
+      border-bottom: 3px double #8b4513;
+      margin-bottom: 30px;
+    }
+    .masthead {
+      font-size: 14px;
+      letter-spacing: 4px;
+      color: #8b4513;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    h1 {
+      font-size: 36px;
+      font-weight: 700;
+      color: #1a1a1a;
+      letter-spacing: 6px;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: #666;
+      font-style: italic;
+    }
+    .date-line {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      margin-top: 12px;
+      font-size: 13px;
+      color: #888;
+    }
+    .date-line::before, .date-line::after {
+      content: '';
+      width: 60px;
+      height: 1px;
+      background: #ccc;
+    }
+    .announcement {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      font-size: 14px;
+      color: #555;
+      text-align: center;
+      font-style: italic;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #8b4513;
+      margin: 30px 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #8b4513;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: #8b4513;
+    }
+    .dish-card {
+      background: #fff;
+      border: 1px solid #e0d5c5;
+      padding: 20px;
+      margin-bottom: 16px;
+      display: flex;
+      gap: 16px;
+      transition: box-shadow 0.2s;
+    }
+    .dish-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .dish-image {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 4px;
+      background: #f0ece4;
+      flex-shrink: 0;
+    }
+    .dish-info {
+      flex: 1;
+    }
+    .dish-name {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+    .dish-place {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+    .dish-desc {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 8px;
+    }
+    .dish-meta {
+      display: flex;
+      gap: 16px;
+      font-size: 13px;
+    }
+    .score {
+      color: #d4a017;
+      font-weight: 600;
+    }
+    .category-tag {
+      display: inline-block;
+      background: #f5f0e8;
+      color: #8b4513;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+    }
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+    .error {
+      text-align: center;
+      padding: 40px;
+      color: #c00;
+    }
+    .categories {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .category-tag.large {
+      padding: 6px 16px;
+      font-size: 14px;
+    }
+    footer {
+      text-align: center;
+      padding: 40px 0 20px;
+      color: #999;
+      font-size: 12px;
+      border-top: 1px solid #ddd;
+      margin-top: 40px;
+    }
+    @media (max-width: 600px) {
+      .dish-card {
+        flex-direction: column;
+      }
+      .dish-image {
+        width: 100%;
+        height: 180px;
+      }
+      h1 {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="masthead">Campus Dining Daily</div>
+      <h1>明天吃什么日报</h1>
+      <div class="subtitle">北京信息科技大学食堂风味指南</div>
+      <div class="date-line" id="dateLine">加载中...</div>
+    </header>
+
+    <div class="announcement" id="announcement">正在获取公告...</div>
+
+    <div class="section-title">今日分类</div>
+    <div class="categories" id="categories">加载中...</div>
+
+    <div class="section-title">风味榜单</div>
+    <div id="dishes">加载中...</div>
+
+    <footer>
+      <p>明天吃什么日报 · 课程项目演示</p>
+      <p style="margin-top:4px">数据来自同学真实投稿与评分</p>
+    </footer>
+  </div>
+
+  <script>
+    const API_BASE = '';
+
+    function formatDate() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, '0');
+      const d = String(now.getDate()).padStart(2, '0');
+      const week = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][now.getDay()];
+      return `${y}年${m}月${d}日 ${week}`;
+    }
+
+    async function fetchJSON(url) {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      if (!data.success) throw new Error(data.message || '请求失败');
+      return data.data;
+    }
+
+    function renderDishes(dishes) {
+      const container = document.getElementById('dishes');
+      if (!dishes || dishes.length === 0) {
+        container.innerHTML = '<div class="loading">暂无菜品数据</div>';
+        return;
+      }
+      container.innerHTML = dishes.map((dish, index) => {
+        const place = [dish.canteenName, dish.floorName, dish.shopName].filter(Boolean).join(' · ');
+        const img = dish.imageUrl && dish.imageUrl.startsWith('data:')
+          ? dish.imageUrl
+          : (dish.imageUrl || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect fill="%23f0ece4" width="100" height="100"/><text fill="%23999" x="50" y="55" text-anchor="middle" font-size="12">暂无图片</text></svg>');
+        return `
+          <div class="dish-card">
+            <img class="dish-image" src="${img}" alt="${dish.name}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect fill=%22%23f0ece4%22 width=%22100%22 height=%22100%22/><text fill=%22%23999%22 x=%2250%22 y=%2255%22 text-anchor=%22middle%22 font-size=%2212%22>暂无图片</text></svg>'">
+            <div class="dish-info">
+              <div class="dish-name">${index + 1}. ${dish.name}</div>
+              <div class="dish-place">${place || '校园食堂'}</div>
+              <div class="dish-desc">${dish.description || '等待同学补充风味记录。'}</div>
+              <div class="dish-meta">
+                <span class="score">★ ${Number(dish.avgScore || 0).toFixed(1)}</span>
+                <span>${dish.ratingCount || 0} 人评价</span>
+                <span class="category-tag">${dish.categoryName || '未分类'}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderCategories(categories) {
+      const container = document.getElementById('categories');
+      if (!categories || categories.length === 0) {
+        container.innerHTML = '';
+        return;
+      }
+      container.innerHTML = categories.map(c =>
+        `<span class="category-tag large">${c.name}</span>`
+      ).join('');
+    }
+
+    async function init() {
+      document.getElementById('dateLine').textContent = formatDate();
+
+      try {
+        const [dishes, announcement, categories] = await Promise.all([
+          fetchJSON('/api/rankings?schoolId=bistu&limit=20').catch(() => []),
+          fetchJSON('/api/announcement?schoolId=bistu').catch(() => '暂无公告'),
+          fetchJSON('/api/categories?schoolId=bistu').catch(() => []),
+        ]);
+        renderDishes(dishes);
+        renderCategories(categories);
+        document.getElementById('announcement').textContent = announcement || '暂无公告，欢迎投稿';
+      } catch (err) {
+        document.getElementById('dishes').innerHTML = `<div class="error">加载失败：${err.message}</div>`;
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
