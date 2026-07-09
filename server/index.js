@@ -306,7 +306,7 @@ app.post('/api/createDish', (req, res) => {
     cleanOptionalString(req.body.floorName) || '',
     cleanOptionalString(req.body.shopName) || '',
     cleanOptionalString(req.body.imageUrl) || '',
-    '', 0, 0, 0, 'PENDING', t, t,
+    '', 5.0, 0, rankScore(5.0, 0), 'PENDING', t, t,
   ]
 
   db.run(
@@ -372,10 +372,11 @@ app.post('/api/rateDish', (req, res) => {
 
     const t = now()
     db.run(
-      'INSERT INTO ratings (userToken, dishId, score, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?) ON CONFLICT(userToken, dishId) DO UPDATE SET score = excluded.score, updatedAt = excluded.updatedAt',
+      'INSERT INTO ratings (userToken, dishId, score, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?) ON CONFLICT(userToken, dishId) DO NOTHING',
       [userToken, dishId, score, t, t],
       function(err) {
         if (err) return res.json(fail(err.message))
+        if (this.changes === 0) return res.json(fail('已经评过分了'))
 
         db.all('SELECT score FROM ratings WHERE dishId = ?', [dishId], (err2, ratings) => {
           if (err2) return res.json(fail(err2.message))
