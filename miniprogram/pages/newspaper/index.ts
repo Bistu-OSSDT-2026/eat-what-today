@@ -430,8 +430,10 @@ Page({
       return
     }
 
-    const randomDish = this.dishes.length ? this.dishes[Math.floor(Math.random() * this.dishes.length)] : null
-    const nextWithImage: RandomPick = { ...next, imageUrl: (randomDish && randomDish.imageUrl) || '' }
+    const matchedDish = this.dishes.find((d) => d.shopText && d.shopText.includes(next.shop))
+    const fallbackDish = this.dishes.length ? this.dishes[Math.floor(Math.random() * this.dishes.length)] : null
+    const targetDish = matchedDish || fallbackDish
+    const nextWithImage: RandomPick = { ...next, imageUrl: (targetDish && targetDish.imageUrl) || '' }
 
     this.setData({ randomRolling: true })
     this.randomRollTimer = setTimeout(() => {
