@@ -776,7 +776,7 @@
       try {
         const data = await fetchJSON('/api/webLogin', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ username, password }) });
         saveUser(data); closeModal('loginModal'); showToast('登录成功'); loadFavorites(); renderProfile();
-      } catch (err) { showToast(err.message); }
+      } catch (err) { closeModal('loginModal'); showToast('账号或密码错误'); }
     }
     async function doRegister() {
       const username = $('regUsername').value.trim(), password = $('regPassword').value, nickname = $('regNickname').value.trim() || username;
