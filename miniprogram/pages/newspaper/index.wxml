@@ -235,6 +235,23 @@
               <text>{{networkNote}}</text>
             </view>
             <view class="section-title">今日风味榜</view>
+
+            <view class="search-box">
+              <view class="search-input-wrap">
+                <text class="search-icon">🔍</text>
+                <input
+                  class="search-input"
+                  type="text"
+                  placeholder="搜索菜品名称..."
+                  value="{{searchKeyword}}"
+                  bindinput="onSearchInput"
+                  confirm-type="search"
+                />
+                <text wx:if="{{searchKeyword}}" class="search-clear" bindtap="onSearchClear">×</text>
+              </view>
+              <text wx:if="{{isSearching}}" class="search-result-count">找到 {{filteredRankingRows.length}} 个结果</text>
+            </view>
+
             <view class="double-rule"></view>
           </view>
 
@@ -244,7 +261,7 @@
               <text class="dish-col">菜品头条与投票</text>
               <text class="score-col">得分</text>
             </view>
-            <view class="ranking-row" wx:for="{{rankingRows}}" wx:key="id">
+            <view class="ranking-row" wx:for="{{filteredRankingRows}}" wx:key="id">
               <text class="rank-col rank-number">{{index + 1}}</text>
               <view class="dish-col dish-info">
                 <text class="dish-headline">{{item.headline}}</text>
@@ -269,6 +286,10 @@
                 <text class="score-number">{{item.scoreText}}</text>
                 <text class="score-meta">{{item.ratingText}}</text>
               </view>
+            </view>
+            <view wx:if="{{isSearching && filteredRankingRows.length === 0}}" class="no-result">
+              <text class="no-result-text">未找到相关菜品</text>
+              <text class="no-result-hint">换个关键词试试</text>
             </view>
           </view>
 

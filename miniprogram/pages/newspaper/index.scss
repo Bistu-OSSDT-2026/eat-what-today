@@ -2947,6 +2947,66 @@ textarea {
   line-height: 1.55;
 }
 
+/* 搜索框样式 */
+.search-box {
+  margin: 16rpx 24rpx 8rpx;
+}
+
+.search-input-wrap {
+  display: flex;
+  align-items: center;
+  background: #f5f0e8;
+  border: 1px solid #d4c8b8;
+  padding: 12rpx 20rpx;
+}
+
+.search-icon {
+  font-size: 28rpx;
+  margin-right: 12rpx;
+  opacity: 0.6;
+}
+
+.search-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: #2c1810;
+  background: transparent;
+  border: none;
+}
+
+.search-clear {
+  font-size: 32rpx;
+  color: #8c7b6b;
+  padding: 0 8rpx;
+}
+
+.search-result-count {
+  display: block;
+  font-size: 22rpx;
+  color: #8c7b6b;
+  margin-top: 8rpx;
+  text-align: right;
+}
+
+/* 无结果提示 */
+.no-result {
+  text-align: center;
+  padding: 60rpx 24rpx;
+}
+
+.no-result-text {
+  display: block;
+  font-size: 32rpx;
+  color: #8c7b6b;
+  margin-bottom: 12rpx;
+}
+
+.no-result-hint {
+  display: block;
+  font-size: 24rpx;
+  color: #a09080;
+}
+
 /* Functional fill pass: use the lead-card blank area without changing the page grid. */
 .random-panel {
   flex: 0 0 auto;
