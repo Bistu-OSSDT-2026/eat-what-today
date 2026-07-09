@@ -49,7 +49,7 @@
                 <text class="front-headline">今天去{{randomPick.shop}}碰碰运气</text>
 
                 <view class="news-photo lead-photo">
-                  <image src="{{leadDish.imageUrl}}" mode="aspectFill" />
+                  <image src="{{randomPick.imageUrl || leadDish.imageUrl}}" mode="aspectFill" />
                   <view class="score-badge">
                     <text class="score-badge-num">换</text>
                     <text class="score-badge-unit">一个</text>
@@ -207,6 +207,17 @@
                   <text class="action-cta-arrow">›</text>
                 </view>
               </view>
+
+              <view class="action-card" bindtap="goFavorites">
+                <text class="action-edition">收藏版</text>
+                <text class="action-icon">❤️</text>
+                <text class="action-title">我的收藏</text>
+                <text class="action-sub">查看已收藏的菜品</text>
+                <view class="action-cta">
+                  <text class="action-cta-text">去查看</text>
+                  <text class="action-cta-arrow">›</text>
+                </view>
+              </view>
             </view>
 
             <view class="front-sponsor">
@@ -296,34 +307,7 @@
               </view>
             </view>
 
-            <!-- 我的收藏 -->
-            <view wx:if="{{favoriteDishes.length > 0}}" class="favorite-section">
-              <view class="section-title">我的收藏</view>
-              <view class="double-rule"></view>
-              <view class="ranking-table newspaper-table">
-                <view class="ranking-row top-row">
-                  <text class="dish-col">菜品</text>
-                  <text class="score-col">窗口</text>
-                  <text class="score-col favorite-col-header">操作</text>
-                </view>
-                <view class="ranking-row" wx:for="{{favoriteDishes}}" wx:key="id">
-                  <view class="dish-col dish-info">
-                    <text class="dish-headline">{{item.headline}}</text>
-                    <text class="dish-name">{{item.name}}</text>
-                  </view>
-                  <text class="score-col score-info">
-                    <text class="score-number">{{item.shopText}}</text>
-                  </text>
-                  <view class="score-col favorite-col">
-                    <text
-                      class="favorite-icon favorited"
-                      data-dish-id="{{item.id}}"
-                      bindtap="toggleFavorite"
-                    >❤️</text>
-                  </view>
-                </view>
-              </view>
-            </view>
+
             <view wx:if="{{isSearching && filteredRankingRows.length === 0}}" class="no-result">
               <text class="no-result-text">未找到相关菜品</text>
               <text class="no-result-hint">换个关键词试试</text>
