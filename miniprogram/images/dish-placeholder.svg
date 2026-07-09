@@ -1,0 +1,34 @@
+<svg width="480" height="360" viewBox="0 0 480 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="480" height="360" fill="#F7F4EC"/>
+  <path d="M0 0H480V360H0V0Z" fill="url(#paper)"/>
+  <ellipse cx="235" cy="247" rx="156" ry="28" fill="#111111" fill-opacity="0.1"/>
+  <path d="M79 129C104 86 166 65 242 69C330 74 394 111 407 161C418 206 374 252 285 267C188 283 98 259 68 206C53 178 58 154 79 129Z" fill="#F8F5EC" stroke="#111111" stroke-width="10"/>
+  <path d="M102 137C132 105 184 92 246 96C321 101 373 130 381 164C389 197 350 229 280 241C198 254 122 236 92 198C76 177 79 156 102 137Z" fill="#EDE8DD" stroke="#111111" stroke-width="5"/>
+  <path d="M115 160C156 132 225 123 289 137C333 147 360 169 354 194C347 222 290 238 219 231C154 224 106 198 108 174C108 169 111 164 115 160Z" fill="#111111" fill-opacity="0.08"/>
+  <g stroke="#111111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M143 164C157 148 178 148 188 164C199 181 189 202 169 204C149 206 132 182 143 164Z"/>
+    <path d="M205 148C224 137 249 146 253 166C258 190 231 207 209 194C190 184 188 158 205 148Z"/>
+    <path d="M275 153C295 142 322 153 323 175C325 196 300 211 280 199C261 188 257 163 275 153Z"/>
+    <path d="M167 217C184 203 207 209 214 227"/>
+    <path d="M239 217C256 201 283 207 291 226"/>
+  </g>
+  <g stroke="#B31921" stroke-width="7" stroke-linecap="round">
+    <path d="M132 193L157 184"/>
+    <path d="M316 185L340 174"/>
+    <path d="M231 180L245 158"/>
+    <path d="M190 138C202 126 218 120 239 121"/>
+  </g>
+  <path d="M99 250C143 292 293 310 375 244" stroke="#111111" stroke-width="8" stroke-linecap="round"/>
+  <path d="M129 270C184 301 285 307 348 266" stroke="#B31921" stroke-width="5" stroke-linecap="round"/>
+  <ellipse cx="390" cy="236" rx="45" ry="29" fill="#F8F5EC" stroke="#111111" stroke-width="6"/>
+  <ellipse cx="390" cy="236" rx="24" ry="14" stroke="#111111" stroke-width="3"/>
+  <path d="M379 235C386 229 397 230 402 237" stroke="#B31921" stroke-width="4" stroke-linecap="round"/>
+  <defs>
+    <pattern id="paper" width="18" height="18" patternUnits="userSpaceOnUse">
+      <rect width="18" height="18" fill="#F7F4EC"/>
+      <circle cx="3" cy="4" r="1" fill="#111111" fill-opacity="0.08"/>
+      <circle cx="13" cy="12" r="1" fill="#111111" fill-opacity="0.06"/>
+      <path d="M0 17H18" stroke="#111111" stroke-opacity="0.05"/>
+    </pattern>
+  </defs>
+</svg>

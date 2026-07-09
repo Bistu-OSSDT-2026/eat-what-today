@@ -1,0 +1,7 @@
+.DS_Store
+node_modules/
+miniprogram_npm/
+project.private.config.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

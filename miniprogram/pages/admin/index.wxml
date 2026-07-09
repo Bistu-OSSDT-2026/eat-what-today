@@ -1,0 +1,153 @@
+<view class="admin-page">
+  <view class="admin-paper">
+    <view class="masthead">
+      <view class="issue-line">
+        <text>后台管理</text>
+        <text>{{schoolName}}</text>
+      </view>
+      <text class="title">食堂小报编辑台</text>
+      <text class="subtitle">公告、分类、菜品上下架与版面文字</text>
+      <view class="double-rule"></view>
+    </view>
+
+    <view class="login-panel" wx:if="{{!adminToken}}">
+      <text class="panel-kicker">ADMIN LOGIN</text>
+      <text class="login-title">输入管理密码</text>
+      <text class="login-copy">登录后可以整理今日榜单、维护公告和分类。</text>
+      <input class="password-input" password value="{{password}}" bindinput="onPasswordInput" placeholder="管理密码" />
+      <view class="primary-action" bindtap="loginAdmin">进入编辑台</view>
+    </view>
+
+    <block wx:else>
+      <view class="toolbar">
+        <view class="tool-action" bindtap="loadAdminData">刷新</view>
+        <view class="tool-action danger" bindtap="logoutAdmin">退出</view>
+      </view>
+
+      <view class="stats-grid">
+        <view class="stat-card">
+          <text>{{stats.total}}</text>
+          <text>全部菜品</text>
+        </view>
+        <view class="stat-card red">
+          <text>{{stats.active}}</text>
+          <text>上架中</text>
+        </view>
+        <view class="stat-card">
+          <text>{{stats.offline}}</text>
+          <text>已下架</text>
+        </view>
+        <view class="stat-card">
+          <text>{{stats.pending}}</text>
+          <text>待审核</text>
+        </view>
+      </view>
+
+      <view class="section-block">
+        <view class="section-heading">
+          <text>公告管理</text>
+          <text>ANNOUNCEMENT</text>
+        </view>
+        <textarea class="announcement-input" value="{{announcement}}" bindinput="onAnnouncementInput" maxlength="160" placeholder="写一条今天会显示在报纸公告栏里的短讯" show-confirm-bar="{{false}}" />
+        <view class="primary-action small" bindtap="saveAnnouncement">保存公告</view>
+      </view>
+
+      <view class="section-block">
+        <view class="section-heading">
+          <text>分类管理</text>
+          <text>CLASSIFIEDS</text>
+        </view>
+        <view class="category-list">
+          <text wx:for="{{categories}}" wx:key="id" class="category-chip">{{item.name}}</text>
+        </view>
+        <view class="inline-form">
+          <input value="{{categoryName}}" bindinput="onCategoryInput" placeholder="新增分类，如 粉面、盖饭" maxlength="24" />
+          <view bindtap="addCategory">添加</view>
+        </view>
+      </view>
+
+      <view class="section-block dish-section">
+        <view class="section-heading">
+          <text>菜品管理</text>
+          <text>DISH DESK</text>
+        </view>
+
+        <scroll-view scroll-x class="status-scroll" enhanced show-scrollbar="{{false}}">
+          <view class="status-tabs">
+            <view
+              wx:for="{{statusTabs}}"
+              wx:key="key"
+              class="status-tab {{activeStatus === item.key ? 'active' : ''}}"
+              data-status="{{item.key}}"
+              bindtap="switchStatus"
+            >{{item.label}}</view>
+          </view>
+        </scroll-view>
+
+        <view class="dish-admin-list">
+          <view class="dish-admin-row status-{{dish.statusClass}}" wx:for="{{visibleDishes}}" wx:for-item="dish" wx:key="id">
+            <image class="dish-thumb" src="{{dish.imageUrl}}" mode="aspectFill" />
+            <view class="dish-body">
+              <view class="row-top">
+                <text class="status-badge">{{dish.statusText}}</text>
+                <text class="score">{{dish.scoreText}} / {{dish.ratingText}}</text>
+              </view>
+              <text class="dish-headline">{{dish.headlineText}}</text>
+              <text class="dish-name">{{dish.name}}</text>
+              <text class="dish-place">{{dish.placeText}}</text>
+              <view class="row-actions">
+                <view bindtap="openEditSheet" data-id="{{dish.id}}">编辑</view>
+                <view wx:if="{{dish.status !== 'ACTIVE'}}" class="red" bindtap="updateDishStatus" data-id="{{dish.id}}" data-status="ACTIVE">上架</view>
+                <view wx:else bindtap="updateDishStatus" data-id="{{dish.id}}" data-status="OFFLINE">下架</view>
+              </view>
+            </view>
+          </view>
+
+          <view class="empty" wx:if="{{!loading && visibleDishes.length === 0}}">
+            当前筛选下没有菜品
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <view class="edit-mask" wx:if="{{showEditSheet}}" bindtap="closeEditSheet"></view>
+  <view class="edit-sheet" wx:if="{{showEditSheet}}">
+    <view class="sheet-head">
+      <view>
+        <text class="panel-kicker">EDIT DISH</text>
+        <text class="sheet-title">编辑菜品</text>
+      </view>
+      <text class="sheet-close" bindtap="closeEditSheet">×</text>
+    </view>
+
+    <view class="field">
+      <text>菜品名称</text>
+      <input value="{{editForm.name}}" data-field="name" bindinput="onEditInput" maxlength="40" />
+    </view>
+    <view class="field-grid">
+      <view class="field">
+        <text>分类</text>
+        <input value="{{editForm.categoryName}}" data-field="categoryName" bindinput="onEditInput" maxlength="24" />
+      </view>
+      <view class="field">
+        <text>楼层</text>
+        <input value="{{editForm.floorName}}" data-field="floorName" bindinput="onEditInput" maxlength="24" />
+      </view>
+    </view>
+    <view class="field">
+      <text>窗口</text>
+      <input value="{{editForm.shopName}}" data-field="shopName" bindinput="onEditInput" maxlength="40" />
+    </view>
+    <view class="field">
+      <text>图片地址</text>
+      <input value="{{editForm.imageUrl}}" data-field="imageUrl" bindinput="onEditInput" placeholder="没有图片可留空" />
+    </view>
+    <view class="field">
+      <text>描述</text>
+      <textarea value="{{editForm.description}}" data-field="description" bindinput="onEditInput" maxlength="160" show-confirm-bar="{{false}}" />
+    </view>
+
+    <view class="primary-action" bindtap="saveDishEdit">保存菜品</view>
+  </view>
+</view>

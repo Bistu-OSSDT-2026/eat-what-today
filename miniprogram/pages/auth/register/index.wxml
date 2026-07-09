@@ -1,0 +1,99 @@
+<view class="reg-page" style="padding-top: {{readerTop}}px;">
+  <view class="paper-sheet reg-edition">
+    <view class="paper-grain"></view>
+    <view class="paper-inner">
+      <view class="masthead compact">
+        <view class="issue-strip">
+          <text>个人中心</text>
+          <text>{{editionDate}}</text>
+          <text>WECHAT PROFILE</text>
+        </view>
+        <view class="section-title">个人中心</view>
+        <view class="double-rule"></view>
+      </view>
+
+      <view class="reg-body">
+        <view class="profile-card">
+          <view class="profile-main">
+            <button
+              class="avatar-button"
+              open-type="chooseAvatar"
+              bindchooseavatar="onChooseAvatar"
+            >
+              <image
+                wx:if="{{form.avatarUrl}}"
+                class="avatar-image"
+                src="{{form.avatarUrl}}"
+                mode="aspectFill"
+              />
+              <view wx:else class="avatar-placeholder">
+                <text>点此</text>
+                <text>选头像</text>
+              </view>
+            </button>
+            <view class="profile-copy">
+              <text class="kicker">{{statusLabel}}</text>
+              <text class="profile-name">{{form.nickname || '微信读者'}}</text>
+              <text class="profile-line">{{identityLabel}}</text>
+            </view>
+          </view>
+
+          <view class="profile-status-grid">
+            <view>
+              <text>投稿身份</text>
+              <text>{{registered ? '已开启' : '待设置'}}</text>
+            </view>
+            <view>
+              <text>评分身份</text>
+              <text>{{registered ? '已开启' : '待设置'}}</text>
+            </view>
+            <view>
+              <text>隐私</text>
+              <text>仅头像昵称</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="reg-lead">
+          <text class="kicker">资料设置</text>
+          <text class="reg-headline">管理你的食堂小报身份。</text>
+          <text class="lead-deck">头像昵称会显示在投稿和评分里。可以用微信资料，也可以改成常用名。</text>
+        </view>
+
+        <view class="field">
+          <text class="field-label">昵称</text>
+          <input
+            class="reg-input"
+            model:value="{{form.nickname}}"
+            type="nickname"
+            placeholder="微信昵称或常用名"
+            maxlength="20"
+          />
+        </view>
+
+        <button
+          class="submit-button"
+          loading="{{submitting}}"
+          disabled="{{submitting}}"
+          bindtap="submit"
+        >{{registered ? '保存个人资料' : '使用微信头像昵称登录'}}</button>
+
+        <button
+          wx:if="{{registered}}"
+          class="logout-button"
+          bindtap="logoutUser"
+        >退出当前身份</button>
+
+        <view class="reg-meta">
+          <text>头像昵称仅用于展示投稿和评分身份。</text>
+          <text>不需要手机号、位置或通讯录。</text>
+        </view>
+      </view>
+
+      <view class="paper-footer">
+        <text>个人中心</text>
+        <text bindtap="goBack">返回上一版</text>
+      </view>
+    </view>
+  </view>
+</view>
