@@ -14,7 +14,8 @@ const DEFAULT_SCHOOL_ID = 'bistu'
 const DEFAULT_SCHOOL_NAME = '北京信息科技大学'
 const ADMIN_SESSION_TTL = 2 * 60 * 60 * 1000
 
-const db = new sqlite3.Database('./data.db')
+const dbPath = process.env.VERCEL ? '/tmp/data.db' : './data.db'
+const db = new sqlite3.Database(dbPath)
 
 function now() { return Date.now() }
 function ok(data) { return { success: true, data } }
@@ -612,6 +613,10 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', time: new Date().toISOString() })
 })
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`)
+  })
+}
+
+module.exports = app
