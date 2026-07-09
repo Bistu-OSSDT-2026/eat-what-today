@@ -431,7 +431,7 @@ Page({
     }
 
     const randomDish = this.dishes.length ? this.dishes[Math.floor(Math.random() * this.dishes.length)] : null
-    const nextWithImage: RandomPick = { ...next, imageUrl: randomDish?.imageUrl || '' }
+    const nextWithImage: RandomPick = { ...next, imageUrl: (randomDish && randomDish.imageUrl) || '' }
 
     this.setData({ randomRolling: true })
     this.randomRollTimer = setTimeout(() => {
