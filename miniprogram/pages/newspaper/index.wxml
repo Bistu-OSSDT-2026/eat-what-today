@@ -441,28 +441,28 @@
 
     <view class="field">
       <text class="field-label">菜品名称</text>
-      <input model:value="{{form.name}}" placeholder="例如 黄焖鸡米饭" maxlength="40" />
+      <input value="{{form.name}}" bindinput="onFormInput" data-field="name" placeholder="例如 黄焖鸡米饭" maxlength="40" />
     </view>
 
     <view class="field-grid">
       <view class="field">
         <text class="field-label">分类</text>
-        <input model:value="{{form.categoryName}}" placeholder="盖饭/粉面" maxlength="20" />
+        <input value="{{form.categoryName}}" bindinput="onFormInput" data-field="categoryName" placeholder="盖饭/粉面" maxlength="20" />
       </view>
       <view class="field">
         <text class="field-label">楼层</text>
-        <input model:value="{{form.floorName}}" placeholder="一楼" maxlength="20" />
+        <input value="{{form.floorName}}" bindinput="onFormInput" data-field="floorName" placeholder="一楼" maxlength="20" />
       </view>
     </view>
 
     <view class="field">
       <text class="field-label">店铺/窗口</text>
-      <input model:value="{{form.shopName}}" placeholder="窗口名称" maxlength="40" />
+      <input value="{{form.shopName}}" bindinput="onFormInput" data-field="shopName" placeholder="窗口名称" maxlength="40" />
     </view>
 
     <view class="field">
       <text class="field-label">一句描述</text>
-      <textarea model:value="{{form.description}}" placeholder="口味、份量、适合什么时候吃" maxlength="160" show-confirm-bar="{{false}}" />
+      <textarea value="{{form.description}}" bindinput="onFormInput" data-field="description" placeholder="口味、份量、适合什么时候吃" maxlength="160" show-confirm-bar="{{false}}" />
     </view>
 
     <view class="image-picker" bindtap="chooseImage">

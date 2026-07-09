@@ -3,8 +3,8 @@ const PROFILE_STORAGE_KEY = 'dishUserProfile'
 const DEFAULT_CLOUD_FUNCTION_NAME = 'dish-api'
 
 // REST API 配置（部署后修改这里）
-const API_BASE_URL = 'https://your-render-app.onrender.com'
-const USE_REST_API = false // 设为 true 切换到 REST API 模式
+const API_BASE_URL = 'https://eat-what-today.onrender.com'
+const USE_REST_API = true // 设为 true 切换到 REST API 模式
 
 export interface UserProfile {
   nickname: string
@@ -89,8 +89,8 @@ function callRestApi<T>(action: string, data: WechatMiniprogram.IAnyObject = {})
       url,
       method: isGet ? 'GET' : 'POST',
       header: {
-        'Content-Type': 'application/json',
-        ...(token ? { 'X-User-Token': token } : {}),
+        'content-type': 'application/json',
+        ...(token ? { 'x-user-token': token } : {}),
       },
       success(res) {
         const result = res.data as CloudResponse<T>
@@ -116,7 +116,7 @@ function callRestApi<T>(action: string, data: WechatMiniprogram.IAnyObject = {})
         .join('&')
       if (query) requestData.url += `?${query}`
     } else {
-      requestData.data = data
+      requestData.data = JSON.stringify(data)
     }
 
     wx.request(requestData)
@@ -153,22 +153,18 @@ function callCloud<T>(action: string, data: WechatMiniprogram.IAnyObject = {}) {
 
 function uploadImage(imagePath: string) {
   return new Promise<string>((resolve, reject) => {
-    if (!wx.cloud) {
-      reject(new Error('当前微信版本不支持云开发'))
-      return
-    }
-
-    const extMatch = imagePath.match(/\.([a-zA-Z0-9]+)$/)
-    const ext = extMatch ? extMatch[1] : 'jpg'
-    const cloudPath = `dish-images/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
-    wx.cloud.uploadFile({
-      cloudPath,
+    const fs = wx.getFileSystemManager()
+    fs.readFile({
       filePath: imagePath,
+      encoding: 'base64',
       success(res) {
-        resolve(res.fileID)
+        const extMatch = imagePath.match(/\.([a-zA-Z0-9]+)$/)
+        const ext = extMatch ? extMatch[1].toLowerCase() : 'jpg'
+        const mime = ext === 'png' ? 'image/png' : ext === 'gif' ? 'image/gif' : 'image/jpeg'
+        resolve(`data:${mime};base64,${res.data}`)
       },
       fail(err) {
-        reject(new Error(err.errMsg || '图片上传失败'))
+        reject(new Error(err.errMsg || '图片读取失败'))
       },
     })
   })

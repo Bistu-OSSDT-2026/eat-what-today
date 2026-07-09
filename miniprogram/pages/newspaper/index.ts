@@ -581,6 +581,14 @@ Page({
     }
   },
 
+  onFormInput(event: WechatMiniprogram.CustomEvent<{ value: string }>) {
+    const field = event.currentTarget.dataset.field as string
+    const value = event.detail.value || ''
+    this.setData({
+      [`form.${field}`]: value,
+    })
+  },
+
   onSearchInput(event: WechatMiniprogram.CustomEvent<{ value: string }>) {
     const keyword = event.detail.value || ''
     this.setData({ searchKeyword: keyword })
