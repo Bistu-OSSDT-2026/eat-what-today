@@ -50,6 +50,7 @@ interface RandomPick {
   shop: string
   place: string
   key: string
+  imageUrl?: string
 }
 
 const EMPTY_RANDOM_PICK: RandomPick = {
@@ -429,9 +430,12 @@ Page({
       return
     }
 
+    const randomDish = this.dishes.length ? this.dishes[Math.floor(Math.random() * this.dishes.length)] : null
+    const nextWithImage: RandomPick = { ...next, imageUrl: randomDish?.imageUrl || '' }
+
     this.setData({ randomRolling: true })
     this.randomRollTimer = setTimeout(() => {
-      this.setData({ randomPick: next })
+      this.setData({ randomPick: nextWithImage })
       this.randomRollTimer = setTimeout(() => {
         this.setData({ randomRolling: false })
         this.randomRollTimer = 0
@@ -457,6 +461,10 @@ Page({
       currentIndex: targetIndex,
       pageNumber: formatTwo(targetIndex + 1),
     })
+  },
+
+  goFavorites() {
+    wx.navigateTo({ url: '/pages/favorites/index' })
   },
 
   refreshData() {
