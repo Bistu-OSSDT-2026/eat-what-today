@@ -1,0 +1,53 @@
+<view class="favorites-page">
+  <view class="paper-sheet">
+    <view class="paper-grain"></view>
+    <view class="paper-inner">
+      <view class="masthead compact">
+        <view class="issue-strip">
+          <text>个人版面</text>
+          <text>我的收藏</text>
+          <text bindtap="goBack">返回 ›</text>
+        </view>
+        <view class="section-title">我的风味收藏</view>
+        <view class="double-rule"></view>
+      </view>
+
+      <view class="favorites-body" wx:if="{{!loading}}">
+        <view wx:if="{{empty}}" class="empty-state">
+          <text class="empty-icon">🤍</text>
+          <text class="empty-title">暂无收藏</text>
+          <text class="empty-hint">去榜单页点击心形图标收藏喜欢的菜品</text>
+        </view>
+
+        <view wx:else class="favorite-list">
+          <view class="favorite-item" wx:for="{{dishes}}" wx:key="id">
+            <view class="item-media">
+              <image src="{{item.imageUrl}}" mode="aspectFill" lazy-load />
+            </view>
+            <view class="item-content">
+              <text class="item-headline">{{item.headline}}</text>
+              <text class="item-name">{{item.name}}</text>
+              <text class="item-shop">{{item.shopText}}</text>
+              <view class="item-meta">
+                <text class="item-score">{{item.scoreText}} 分</text>
+                <text class="item-rating">{{item.ratingText}}</text>
+              </view>
+            </view>
+            <view class="item-action">
+              <text class="favorite-icon favorited" data-dish-id="{{item.id}}" bindtap="toggleFavorite">❤️</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{loading}}" class="loading-state">
+        <text>正在整理收藏…</text>
+      </view>
+
+      <view class="paper-footer">
+        <text>我的收藏</text>
+        <text bindtap="goBack">返回首页 ›</text>
+      </view>
+    </view>
+  </view>
+</view>
