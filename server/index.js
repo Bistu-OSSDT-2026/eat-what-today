@@ -192,6 +192,25 @@ db.serialize(() => {
       })
     }
   })
+
+  // 强制更新现有菜品图片路径，确保每个菜品都有独立图片（与Web端一致）
+  const dishImageMap = {
+    '黄焖鸡米饭': '/images/dish1.jpg',
+    '麻辣香锅': '/images/dish2.jpg',
+    '桂林米粉': '/images/dish3.jpg',
+    '兰州拉面': '/images/dish4.jpg',
+    '重庆小面': '/images/dish5.jpg',
+    '酸菜鱼': '/images/dish6.jpg',
+    '煲仔饭': '/images/dish7.jpg',
+    '自助餐': '/images/dish8.jpg',
+    '沙县小吃': '/images/dish9.jpg',
+    '麻辣烫': '/images/dish10.jpg',
+    '烤肉拌饭': '/images/dish11.jpg',
+    '奶茶': '/images/dish12.jpg',
+  }
+  Object.entries(dishImageMap).forEach(([name, imageUrl]) => {
+    db.run('UPDATE dishes SET imageUrl = ? WHERE name = ? AND schoolId = ?', [imageUrl, name, DEFAULT_SCHOOL_ID])
+  })
 })
 
 // 注册/登录
