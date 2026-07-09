@@ -3,7 +3,7 @@ const PROFILE_STORAGE_KEY = 'dishUserProfile'
 const DEFAULT_CLOUD_FUNCTION_NAME = 'dish-api'
 
 // REST API 配置（部署后修改这里）
-const API_BASE_URL = 'https://eat-what-today.onrender.com'
+export const API_BASE_URL = 'https://eat-what-today.onrender.com'
 const USE_REST_API = true // 设为 true 切换到 REST API 模式
 
 export interface UserProfile {
