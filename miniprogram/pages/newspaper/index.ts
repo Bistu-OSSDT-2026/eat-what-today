@@ -274,6 +274,9 @@ Page({
     searchKeyword: '',
     filteredRankingRows: [] as DisplayDish[],
     isSearching: false,
+    favoriteIds: [] as string[],
+    favoriteMap: {} as Record<string, boolean>,
+    favoriteDishes: [] as DisplayDish[],
     form: {
       name: '',
       categoryName: '',
@@ -394,6 +397,7 @@ Page({
       rankingRows: this.dishes.slice(0, 8),
       filteredRankingRows: this.dishes.slice(0, 8),
       categoryRows: this.categoriesCache.slice(0, 10),
+      ...this.buildFavoriteData(),
       randomPick,
     })
   },
@@ -613,5 +617,32 @@ Page({
       filteredRankingRows: this.dishes.slice(0, 8),
       isSearching: false,
     })
+  },
+
+  toggleFavorite(event: WechatMiniprogram.BaseEvent) {
+    const dishId = String(event.currentTarget.dataset.dishId || '')
+    if (!dishId) return
+
+    let favoriteIds: string[] = wx.getStorageSync('favorite_dish_ids') || []
+    const index = favoriteIds.indexOf(dishId)
+
+    if (index > -1) {
+      favoriteIds.splice(index, 1)
+      wx.showToast({ title: '已取消收藏', icon: 'success' })
+    } else {
+      favoriteIds.push(dishId)
+      wx.showToast({ title: '已收藏', icon: 'success' })
+    }
+
+    wx.setStorageSync('favorite_dish_ids', favoriteIds)
+    this.setData(this.buildFavoriteData())
+  },
+
+  buildFavoriteData() {
+    const favoriteIds: string[] = wx.getStorageSync('favorite_dish_ids') || []
+    const favoriteMap: Record<string, boolean> = {}
+    favoriteIds.forEach((id) => { favoriteMap[id] = true })
+    const favoriteDishes = this.dishes.filter((dish) => favoriteMap[dish.id])
+    return { favoriteIds, favoriteMap, favoriteDishes }
   },
 })
