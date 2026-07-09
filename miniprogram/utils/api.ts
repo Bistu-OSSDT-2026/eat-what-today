@@ -2,6 +2,10 @@ const TOKEN_STORAGE_KEY = 'dishUserToken'
 const PROFILE_STORAGE_KEY = 'dishUserProfile'
 const DEFAULT_CLOUD_FUNCTION_NAME = 'dish-api'
 
+// REST API 配置（部署后修改这里）
+const API_BASE_URL = 'https://your-render-app.onrender.com'
+const USE_REST_API = false // 设为 true 切换到 REST API 模式
+
 export interface UserProfile {
   nickname: string
   avatarUrl: string
@@ -75,7 +79,55 @@ function unwrap<T>(body: CloudResponse<T>) {
   return body.data as T
 }
 
+function callRestApi<T>(action: string, data: WechatMiniprogram.IAnyObject = {}) {
+  return new Promise<T>((resolve, reject) => {
+    const token = wx.getStorageSync(TOKEN_STORAGE_KEY)
+    const url = `${API_BASE_URL}/api/${action}`
+    const isGet = ['rankings', 'categories', 'announcement', 'canteenData', 'dishes'].includes(action)
+
+    const requestData: WechatMiniprogram.RequestOption = {
+      url,
+      method: isGet ? 'GET' : 'POST',
+      header: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'X-User-Token': token } : {}),
+      },
+      success(res) {
+        const result = res.data as CloudResponse<T>
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          try {
+            resolve(unwrap<T>(result))
+          } catch (error) {
+            reject(error)
+          }
+        } else {
+          reject(new Error(result.message || `HTTP ${res.statusCode}`))
+        }
+      },
+      fail(err) {
+        reject(new Error(err.errMsg || '网络请求失败'))
+      },
+    }
+
+    if (isGet) {
+      const query = Object.keys(data)
+        .filter((k) => data[k] !== undefined && data[k] !== '')
+        .map((k) => `${encodeURIComponent(k)}=${encodeURIComponent(String(data[k]))}`)
+        .join('&')
+      if (query) requestData.url += `?${query}`
+    } else {
+      requestData.data = data
+    }
+
+    wx.request(requestData)
+  })
+}
+
 function callCloud<T>(action: string, data: WechatMiniprogram.IAnyObject = {}) {
+  if (USE_REST_API) {
+    return callRestApi<T>(action, data)
+  }
+
   return new Promise<T>((resolve, reject) => {
     if (!wx.cloud) {
       reject(new Error('当前微信版本不支持云开发'))
