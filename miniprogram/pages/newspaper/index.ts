@@ -271,6 +271,9 @@ Page({
     imageName: '',
     registered: false,
     profileLabel: '个人资料',
+    searchKeyword: '',
+    filteredRankingRows: [] as DisplayDish[],
+    isSearching: false,
     form: {
       name: '',
       categoryName: '',
@@ -389,6 +392,7 @@ Page({
       featureDish: pickDish(this.dishes, 1),
       thirdDish: pickDish(this.dishes, 2),
       rankingRows: this.dishes.slice(0, 8),
+      filteredRankingRows: this.dishes.slice(0, 8),
       categoryRows: this.categoriesCache.slice(0, 10),
       randomPick,
     })
@@ -571,5 +575,43 @@ Page({
       wx.hideLoading()
       this.setData({ submitting: false })
     }
+  },
+
+  onSearchInput(event: WechatMiniprogram.CustomEvent<{ value: string }>) {
+    const keyword = event.detail.value || ''
+    this.setData({ searchKeyword: keyword })
+
+    if (!keyword.trim()) {
+      this.setData({
+        filteredRankingRows: this.dishes.slice(0, 8),
+        isSearching: false,
+      })
+      return
+    }
+
+    const filtered = this.dishes.filter((dish) => {
+      const name = dish.name || ''
+      const headline = dish.headline || ''
+      const shop = dish.shopText || ''
+      const lowerKeyword = keyword.toLowerCase()
+      return (
+        name.toLowerCase().includes(lowerKeyword) ||
+        headline.toLowerCase().includes(lowerKeyword) ||
+        shop.toLowerCase().includes(lowerKeyword)
+      )
+    })
+
+    this.setData({
+      filteredRankingRows: filtered,
+      isSearching: true,
+    })
+  },
+
+  onSearchClear() {
+    this.setData({
+      searchKeyword: '',
+      filteredRankingRows: this.dishes.slice(0, 8),
+      isSearching: false,
+    })
   },
 })
