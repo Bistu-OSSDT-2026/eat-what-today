@@ -72,6 +72,11 @@ swiper-item {
   transform: rotate(0.24deg);
 }
 
+.ranking-edition .paper-inner {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .submit-edition {
   transform: rotate(-0.2deg) translateX(1px);
 }
