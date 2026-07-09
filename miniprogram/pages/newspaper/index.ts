@@ -1,5 +1,6 @@
 import {
   announcement,
+  API_BASE_URL,
   canteenData,
   categories,
   getStoredProfile,
@@ -162,11 +163,15 @@ function normalizeDish(dish: DishView): DisplayDish {
   const place = [dish.canteenName, dish.floorName, dish.shopName].filter(Boolean).join(' · ')
   const name = dish.name || '未命名菜品'
   const description = dish.description || '等待同学补充风味记录。'
+  let imageUrl = dish.imageUrl || DISH_PLACEHOLDER
+  if (imageUrl && imageUrl.startsWith('/') && !imageUrl.startsWith('/images/dish-placeholder')) {
+    imageUrl = `${API_BASE_URL}${imageUrl}`
+  }
   return {
     id: dish.id,
     name,
     description,
-    imageUrl: dish.imageUrl || DISH_PLACEHOLDER,
+    imageUrl,
     categoryName: dish.categoryName || '未分类',
     placeText: place || '校园食堂',
     shopText: dish.shopName || place || '校园食堂',
