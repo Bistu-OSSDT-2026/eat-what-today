@@ -154,7 +154,7 @@ db.serialize(() => {
   })
 
   // 插入默认分类
-  const defaultCategories = ['面食', '米饭', '粥汤', '小炒', '清真', '饮品']
+  const defaultCategories = ['盖饭', '粉面', '麻辣', '饮品', '小炒', '清真']
   defaultCategories.forEach((name, idx) => {
     db.get("SELECT id FROM categories WHERE schoolId = ? AND name = ?", [DEFAULT_SCHOOL_ID, name], (err, row) => {
       if (!row) {
@@ -162,6 +162,35 @@ db.serialize(() => {
           [DEFAULT_SCHOOL_ID, name, now() + idx, now()])
       }
     })
+  })
+
+  // 插入默认菜品
+  const defaultDishes = [
+    { name: '黄焖鸡米饭', categoryName: '盖饭', canteenName: '一食堂', floorName: '一楼', shopName: '黄焖鸡米饭', description: '酱香浓郁，土豆软糯，是不知道吃什么时最稳的一道。', avgScore: 4.9, ratingCount: 126 },
+    { name: '麻辣香锅', categoryName: '麻辣', canteenName: '一食堂', floorName: '一楼', shopName: '麻辣香锅', description: '适合多人拼单，辣度稳定，午饭高峰也很有存在感。', avgScore: 4.7, ratingCount: 94 },
+    { name: '桂林米粉', categoryName: '粉面', canteenName: '二食堂', floorName: '一楼', shopName: '桂林米粉', description: '出餐快，汤粉和拌粉都适合赶课前后。', avgScore: 4.6, ratingCount: 72 },
+    { name: '兰州拉面', categoryName: '粉面', canteenName: '一食堂', floorName: '一楼', shopName: '兰州拉面', description: '汤头清亮，面条劲道，冬天来一碗很暖。', avgScore: 4.5, ratingCount: 68 },
+    { name: '重庆小面', categoryName: '粉面', canteenName: '一食堂', floorName: '一楼', shopName: '重庆小面', description: '麻辣鲜香，重口味同学的首选。', avgScore: 4.4, ratingCount: 55 },
+    { name: '酸菜鱼', categoryName: '小炒', canteenName: '一食堂', floorName: '二楼', shopName: '酸菜鱼', description: '鱼肉嫩滑，酸菜爽口，分量足。', avgScore: 4.6, ratingCount: 81 },
+    { name: '煲仔饭', categoryName: '盖饭', canteenName: '一食堂', floorName: '二楼', shopName: '煲仔饭', description: '锅巴香脆，腊肠香甜，饭粒分明。', avgScore: 4.5, ratingCount: 63 },
+    { name: '自助餐', categoryName: '盖饭', canteenName: '一食堂', floorName: '二楼', shopName: '自助餐', description: '菜品丰富，自选称重，想吃啥拿啥。', avgScore: 4.3, ratingCount: 112 },
+    { name: '沙县小吃', categoryName: '粉面', canteenName: '二食堂', floorName: '一楼', shopName: '沙县小吃', description: '蒸饺、拌面、炖汤，性价比之王。', avgScore: 4.2, ratingCount: 89 },
+    { name: '麻辣烫', categoryName: '麻辣', canteenName: '二食堂', floorName: '三楼', shopName: '麻辣烫', description: '汤底浓郁，菜品新鲜，冬天必吃。', avgScore: 4.4, ratingCount: 76 },
+    { name: '烤肉拌饭', categoryName: '盖饭', canteenName: '一食堂', floorName: '三楼', shopName: '烤肉', description: '烤肉焦香，配菜丰富，酱汁很下饭。', avgScore: 4.3, ratingCount: 58 },
+    { name: '奶茶', categoryName: '饮品', canteenName: '二食堂', floorName: '二楼', shopName: '奶茶店', description: '饭后一杯，甜度可选，珍珠Q弹。', avgScore: 4.1, ratingCount: 145 },
+  ]
+
+  db.get("SELECT id FROM dishes WHERE schoolId = ? LIMIT 1", [DEFAULT_SCHOOL_ID], (err, row) => {
+    if (!row) {
+      const t = now()
+      defaultDishes.forEach((dish, idx) => {
+        const rank = dish.avgScore * 1000 + dish.ratingCount
+        db.run(
+          `INSERT INTO dishes (schoolId, name, categoryName, description, canteenName, floorName, shopName, imageUrl, headline, avgScore, ratingCount, rankScore, status, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [DEFAULT_SCHOOL_ID, dish.name, dish.categoryName, dish.description, dish.canteenName, dish.floorName, dish.shopName, '', `${dish.name}登上今日风味榜`, dish.avgScore, dish.ratingCount, rank, 'ACTIVE', t + idx, t + idx]
+        )
+      })
+    }
   })
 })
 

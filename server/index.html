@@ -8,9 +8,9 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      background: #f5f0e8;
-      color: #2c2c2c;
-      line-height: 1.6;
+      background: #dfdfdf;
+      color: #0b0b0b;
+      line-height: 1.5;
       overflow-x: hidden;
     }
     .app {
@@ -19,7 +19,7 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      background: #f5f0e8;
+      background: #dfdfdf;
     }
     .page-content {
       flex: 1;
@@ -28,183 +28,373 @@
     }
     .page { display: none; }
     .page.active { display: block; animation: fadeIn 0.2s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-    /* 报头 */
-    .masthead {
+    /* 报纸页 */
+    .paper-sheet {
+      background: #f6f6f2;
+      border: 1px solid rgba(0,0,0,0.9);
+      margin: 7px;
+      min-height: calc(100vh - 84px);
+      box-shadow: 0 9px 20px rgba(0,0,0,0.22), 0 1px 0 rgba(255,255,255,0.64), inset 6px 0 9px rgba(0,0,0,0.028), inset -7px 0 11px rgba(0,0,0,0.042);
+      transform: rotate(-0.28deg);
+      transform-origin: 52% 48%;
+    }
+    .paper-inner { padding: 8px 8px 6px; }
+
+    /* issue-strip */
+    .issue-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 22px;
+      padding: 0 4px;
+      border-top: 1.5px solid rgba(0,0,0,0.82);
+      border-bottom: 1px solid rgba(0,0,0,0.72);
+      color: #353535;
+      font-size: 9px;
+      font-weight: 800;
+      line-height: 22px;
+    }
+    .issue-strip span:first-child { color: #b31921; }
+
+    /* 大标题 */
+    .masthead-title {
+      display: block;
+      margin-top: 2px;
+      color: #050505;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: 0;
+      line-height: 1;
       text-align: center;
-      padding: 16px 0 12px;
-      border-bottom: 3px double #8b4513;
-      background: #faf8f3;
+      text-shadow: 0.35px 0.35px 0.5px rgba(0,0,0,0.18), -0.2px 0 0.35px rgba(0,0,0,0.08);
+    }
+    .masthead-subtitle {
+      display: block;
+      margin-top: 1px;
+      color: #b31921;
+      font-size: 9px;
+      font-weight: 900;
+      text-align: center;
+    }
+    .double-rule {
+      height: 6px;
+      border-top: 2px solid rgba(0,0,0,0.86);
+      border-bottom: 1px solid rgba(0,0,0,0.68);
+      margin: 3px 0;
+    }
+    .issue-banner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 10px;
+      color: #555;
+      padding: 3px 0;
       position: relative;
     }
-    .masthead-kicker { font-size: 11px; letter-spacing: 3px; color: #8b4513; text-transform: uppercase; }
-    .masthead-title { font-size: 24px; font-weight: 700; color: #1a1a1a; letter-spacing: 4px; margin: 4px 0; }
-    .masthead-sub { font-size: 12px; color: #888; font-style: italic; }
-    .masthead-date { font-size: 12px; color: #999; margin-top: 6px; }
-    .masthead .login-btn {
+    .banner-star { color: #b31921; font-size: 8px; }
+    .banner-tag { font-weight: 700; }
+    .edition-badge {
       position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: #8b4513;
-      color: #fff;
-      border: none;
-      padding: 5px 12px;
-      border-radius: 12px;
-      font-size: 12px;
+      right: 0;
+      font-size: 9px;
+      color: #888;
+      border: 1px solid #ccc;
+      padding: 1px 4px;
+    }
+
+    /* 首页布局 */
+    .front-body { display: flex; gap: 6px; margin-top: 4px; }
+    .front-main { flex: 1 1 62%; min-width: 0; padding-right: 5px; border-right: 1px solid rgba(0,0,0,0.78); }
+    .front-sidebar { flex: 0 0 36%; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+
+    /* 头条卡片 */
+    .lead-card {
+      border-bottom: 1px solid rgba(0,0,0,0.44);
+      padding-bottom: 6px;
       cursor: pointer;
     }
-    .masthead .user-label {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 12px;
-      color: #8b4513;
-      background: #f5f0e8;
-      padding: 4px 10px;
-      border-radius: 12px;
+    .topic-tag {
+      display: inline-block;
+      color: #b31921;
+      font-size: 10px;
+      font-weight: 900;
+      margin-bottom: 2px;
     }
-
-    /* 公告 */
-    .announcement-bar {
-      background: #fff;
-      border-left: 3px solid #8b4513;
-      padding: 10px 14px;
-      margin: 12px 16px;
-      font-size: 13px;
-      color: #555;
-      font-style: italic;
-    }
-
-    /* 菜品卡片 */
-    .hero-card {
-      background: #fff;
-      margin: 0 16px 12px;
-      border: 1px solid #e0d5c5;
+    .front-headline {
+      font-size: 16px;
+      font-weight: 900;
+      line-height: 1.25;
+      margin-bottom: 4px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
       overflow: hidden;
     }
-    .hero-image { width: 100%; height: 200px; object-fit: cover; background: #f0ece4; display: block; }
-    .hero-body { padding: 14px 16px; }
-    .hero-headline { font-size: 18px; font-weight: 700; color: #1a1a1a; margin-bottom: 6px; line-height: 1.4; }
-    .hero-place { font-size: 12px; color: #888; margin-bottom: 8px; }
-    .hero-desc { font-size: 13px; color: #555; margin-bottom: 10px; }
-    .hero-meta { display: flex; gap: 12px; font-size: 13px; align-items: center; }
-    .hero-score { color: #d4a017; font-weight: 700; }
-
-    .sub-hero { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 16px; margin-bottom: 12px; }
-    .sub-card { background: #fff; border: 1px solid #e0d5c5; overflow: hidden; }
-    .sub-image { width: 100%; height: 110px; object-fit: cover; background: #f0ece4; display: block; }
-    .sub-body { padding: 10px; }
-    .sub-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-    .sub-place { font-size: 11px; color: #888; }
-    .sub-meta { display: flex; gap: 8px; font-size: 12px; margin-top: 6px; }
-
-    /* 随机推荐 */
-    .random-box {
-      background: #fff; margin: 0 16px 16px; padding: 16px;
-      border: 1px solid #e0d5c5; text-align: center;
+    .news-photo {
+      width: 100%;
+      height: 120px;
+      background: #e8e8e0;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 4px;
     }
-    .random-title { font-size: 13px; color: #8b4513; margin-bottom: 8px; font-weight: 600; }
-    .random-result { font-size: 16px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
-    .random-detail { font-size: 12px; color: #888; margin-bottom: 12px; }
-    .random-btn { background: #8b4513; color: #fff; border: none; padding: 8px 24px; border-radius: 20px; font-size: 14px; cursor: pointer; }
-    .random-btn:active { opacity: 0.8; }
-
-    /* 板块标题 */
-    .section-title {
-      font-size: 16px; font-weight: 700; color: #8b4513;
-      margin: 20px 16px 12px; padding-bottom: 6px;
-      border-bottom: 2px solid #8b4513; display: flex; align-items: center; gap: 6px;
+    .news-photo img { width: 100%; height: 100%; object-fit: cover; }
+    .score-badge {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid #000;
+      padding: 2px 6px;
+      text-align: center;
     }
-    .section-title::before { content: ''; width: 3px; height: 16px; background: #8b4513; }
+    .score-badge-num { display: block; font-size: 14px; font-weight: 900; color: #b31921; line-height: 1; }
+    .score-badge-unit { display: block; font-size: 8px; color: #333; line-height: 1; }
 
-    /* 榜单列表 */
-    .dish-list { padding: 0 16px; }
-    .dish-item {
-      background: #fff; border: 1px solid #e0d5c5;
-      padding: 14px; margin-bottom: 10px; display: flex; gap: 12px; position: relative;
+    .lead-meta-row { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+    .lead-stat-row { display: flex; gap: 8px; margin-bottom: 4px; }
+    .lead-stat { display: flex; align-items: center; gap: 2px; font-size: 9px; color: #555; }
+    .stat-icon { color: #b31921; font-weight: 700; font-size: 8px; }
+
+    .info-row {
+      display: flex;
+      gap: 4px;
+      padding: 3px 0;
+      border-top: 1px dotted rgba(0,0,0,0.25);
+      font-size: 10px;
     }
-    .dish-item-rank { font-size: 20px; font-weight: 700; color: #8b4513; width: 32px; text-align: center; flex-shrink: 0; line-height: 1; }
-    .dish-item-rank.top { color: #d4a017; }
-    .dish-item-image { width: 70px; height: 70px; object-fit: cover; border-radius: 4px; background: #f0ece4; flex-shrink: 0; }
-    .dish-item-info { flex: 1; }
-    .dish-item-name { font-size: 15px; font-weight: 600; margin-bottom: 3px; display: flex; justify-content: space-between; }
-    .dish-item-place { font-size: 11px; color: #888; margin-bottom: 4px; }
-    .dish-item-desc { font-size: 12px; color: #666; margin-bottom: 6px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .dish-item-meta { display: flex; gap: 10px; font-size: 12px; align-items: center; flex-wrap: wrap; }
+    .info-icon { color: #b31921; font-weight: 700; font-size: 9px; flex-shrink: 0; }
+    .info-body { flex: 1; }
+    .info-label { display: block; font-weight: 700; color: #333; }
+    .info-text { display: block; color: #555; }
 
-    /* 收藏心形 */
-    .favorite-btn {
-      font-size: 20px; cursor: pointer; color: #ccc; user-select: none;
-      position: absolute; right: 12px; top: 12px;
+    /* 二条三条 */
+    .lead-briefs { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+    .lead-brief { border-bottom: 1px solid rgba(0,0,0,0.2); padding-bottom: 4px; }
+    .lead-brief:last-child { border-bottom: none; }
+    .lead-brief-media { position: relative; width: 100%; height: 70px; background: #e8e8e0; margin-bottom: 3px; }
+    .lead-brief-media img { width: 100%; height: 100%; object-fit: cover; }
+    .lead-brief-label {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      background: #b31921;
+      color: #fff;
+      font-size: 8px;
+      padding: 1px 4px;
+      font-weight: 700;
     }
-    .favorite-btn.active { color: #e74c3c; }
+    .lead-brief-title { font-size: 12px; font-weight: 900; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .lead-brief-meta { display: flex; gap: 6px; font-size: 9px; color: #888; margin: 2px 0; }
+    .lead-brief-text { font-size: 9px; color: #666; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
-    /* 评分星星 */
-    .star-rating { display: flex; gap: 4px; }
-    .star { font-size: 18px; cursor: pointer; color: #ddd; }
-    .star.active { color: #d4a017; }
+    /* 侧边栏 */
+    .side-card {
+      border: 1px solid rgba(0,0,0,0.6);
+      padding: 5px;
+      background: #fff;
+    }
+    .side-card-head { display: flex; align-items: center; gap: 4px; border-bottom: 1px solid #000; padding-bottom: 2px; margin-bottom: 3px; }
+    .side-label { background: #b31921; color: #fff; font-size: 9px; padding: 1px 3px; font-weight: 700; }
+    .side-title { font-size: 11px; font-weight: 900; }
+    .side-link { display: block; text-align: center; font-size: 9px; color: #b31921; margin-top: 3px; font-weight: 700; }
+
+    .mini-rank {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 0;
+      border-bottom: 1px dotted rgba(0,0,0,0.2);
+      font-size: 10px;
+    }
+    .mini-rank:last-child { border-bottom: none; }
+    .mini-rank-num { font-size: 14px; font-weight: 900; color: #b31921; width: 16px; text-align: center; }
+    .mini-rank-copy { flex: 1; min-width: 0; }
+    .mini-rank-name { display: block; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mini-rank-shop { display: block; font-size: 8px; color: #888; }
+    .mini-rank-score { font-weight: 700; color: #d4a017; }
+    .mini-rank-arrow { color: #888; font-size: 12px; }
+
+    .random-card { cursor: pointer; }
+    .random-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; }
+    .random-label { font-size: 9px; font-weight: 900; color: #b31921; }
+    .random-refresh { font-size: 8px; color: #888; }
+    .random-body { text-align: center; }
+    .random-shop { display: block; font-size: 13px; font-weight: 900; }
+    .random-place { display: block; font-size: 8px; color: #888; }
+
+    /* 分割线 */
+    .section-divider { display: flex; align-items: center; gap: 8px; margin: 8px 0; }
+    .divider-line { flex: 1; height: 1px; background: rgba(0,0,0,0.3); }
+    .divider-text { font-size: 10px; color: #888; white-space: nowrap; }
+
+    /* action-grid */
+    .action-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin: 6px 0; }
+    .action-card {
+      border: 1px solid rgba(0,0,0,0.5);
+      padding: 6px;
+      text-align: center;
+      cursor: pointer;
+      background: #fafaf8;
+    }
+    .action-card-primary { background: #b31921; color: #fff; }
+    .action-card-primary .action-title,
+    .action-card-primary .action-sub,
+    .action-card-primary .action-cta-text { color: #fff; }
+    .action-edition { font-size: 8px; font-weight: 900; color: #b31921; display: block; }
+    .action-card-primary .action-edition { color: rgba(255,255,255,0.8); }
+    .action-icon { font-size: 18px; display: block; margin: 2px 0; }
+    .action-title { font-size: 11px; font-weight: 900; display: block; }
+    .action-sub { font-size: 8px; color: #888; display: block; margin-bottom: 3px; }
+    .action-cta { display: flex; align-items: center; justify-content: center; gap: 2px; font-size: 9px; }
+    .action-cta-text { color: #b31921; font-weight: 700; }
+    .action-cta-arrow { color: #b31921; }
+
+    .front-sponsor { text-align: center; font-size: 8px; color: #999; margin-top: 6px; }
+    .front-sponsor span { display: block; }
+
+    .paper-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0;
+      border-top: 1px solid rgba(0,0,0,0.5);
+      margin-top: 6px;
+      font-size: 9px;
+      color: #888;
+    }
+    .paper-footer span { cursor: pointer; }
+
+    /* 榜单页报纸 */
+    .ranking-paper .paper-inner { padding-top: 4px; }
+    .compact .issue-strip { height: 18px; }
+    .ranking-section-title {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 24px;
+      font-weight: 900;
+      text-align: center;
+      padding: 4px 0 2px;
+      color: #050505;
+    }
 
     /* 搜索 */
-    .search-box { padding: 10px 16px; position: sticky; top: 0; background: #f5f0e8; z-index: 10; }
-    .search-input { width: 100%; padding: 10px 14px; border: 1px solid #d0c8b8; border-radius: 20px; font-size: 14px; background: #fff; outline: none; }
-    .search-input:focus { border-color: #8b4513; }
+    .search-box { padding: 6px 0; }
+    .search-input-wrap { display: flex; align-items: center; border: 1px solid rgba(0,0,0,0.5); background: #fff; padding: 0 6px; }
+    .search-icon { font-size: 12px; margin-right: 4px; }
+    .search-input { flex: 1; border: none; outline: none; padding: 6px 0; font-size: 12px; background: transparent; }
+    .search-clear { font-size: 14px; cursor: pointer; color: #888; }
+    .search-result-count { font-size: 10px; color: #888; margin-top: 2px; }
 
-    /* 分类标签 */
-    .category-tags { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 16px; margin-bottom: 12px; }
-    .category-tag {
-      background: #fff; border: 1px solid #d0c8b8; color: #8b4513;
-      padding: 6px 14px; border-radius: 16px; font-size: 13px; cursor: pointer;
+    /* 榜单表格 */
+    .ranking-table { margin-top: 4px; }
+    .ranking-row {
+      display: flex;
+      align-items: flex-start;
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.2);
+      font-size: 11px;
     }
-    .category-tag.active { background: #8b4513; color: #fff; border-color: #8b4513; }
+    .ranking-row.top-row {
+      border-bottom: 2px solid #000;
+      font-weight: 900;
+      font-size: 9px;
+      text-transform: uppercase;
+      color: #555;
+      padding: 2px 0;
+    }
+    .rank-col { width: 28px; text-align: center; flex-shrink: 0; font-weight: 900; font-size: 14px; color: #b31921; }
+    .rank-col.rank-number { font-family: Georgia, serif; }
+    .dish-col { flex: 1; min-width: 0; padding: 0 4px; }
+    .dish-headline { display: block; font-weight: 900; font-size: 12px; line-height: 1.2; margin-bottom: 1px; }
+    .dish-name { display: block; font-size: 10px; color: #555; }
+    .dish-place { display: block; font-size: 9px; color: #888; margin-top: 1px; }
+    .score-col { width: 50px; text-align: center; flex-shrink: 0; }
+    .score-col.favorite-col-header { width: 36px; }
+    .score-number { display: block; font-size: 14px; font-weight: 900; color: #d4a017; }
+    .score-meta { display: block; font-size: 8px; color: #888; }
+    .favorite-col { width: 36px; text-align: center; }
+    .favorite-icon { font-size: 16px; cursor: pointer; }
+    .favorite-icon.favorited { color: #e74c3c; }
 
-    /* 投稿表单 */
-    .form-page { padding: 16px; }
-    .form-group { margin-bottom: 16px; }
-    .form-label { font-size: 14px; font-weight: 600; color: #333; margin-bottom: 6px; display: block; }
-    .form-input, .form-textarea { width: 100%; padding: 10px 12px; border: 1px solid #d0c8b8; border-radius: 6px; font-size: 14px; background: #fff; outline: none; }
-    .form-input:focus, .form-textarea:focus { border-color: #8b4513; }
-    .form-textarea { min-height: 80px; resize: vertical; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .form-submit { width: 100%; padding: 12px; background: #8b4513; color: #fff; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 8px; }
-    .form-submit:active { opacity: 0.9; }
-    .form-submit:disabled { background: #ccc; cursor: not-allowed; }
+    .vote-strip { display: flex; align-items: center; gap: 4px; margin-top: 3px; }
+    .vote-label { font-size: 8px; font-weight: 900; color: #b31921; }
+    .rating-strip { display: flex; gap: 2px; }
+    .rating-button {
+      width: 18px; height: 18px;
+      border: 1px solid rgba(0,0,0,0.4);
+      background: #fff;
+      font-size: 10px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .rating-button:hover { background: #b31921; color: #fff; }
+
+    .favorite-section { margin-top: 12px; }
+    .favorite-section .section-title { font-size: 16px; }
+
+    .no-result { text-align: center; padding: 30px; }
+    .no-result-text { font-size: 14px; font-weight: 700; color: #888; }
+    .no-result-hint { font-size: 11px; color: #aaa; }
+
+    /* 分类页 */
+    .category-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; padding: 8px; }
+    .category-item {
+      background: #fff; border: 1px solid rgba(0,0,0,0.5);
+      padding: 12px 6px; text-align: center; cursor: pointer;
+      font-size: 13px; font-weight: 700;
+    }
+    .category-item:hover { background: #b31921; color: #fff; }
+
+    /* 投稿页 */
+    .submit-paper .kicker { color: #b31921; font-size: 10px; font-weight: 900; }
+    .submit-headline { font-size: 16px; font-weight: 900; display: block; margin: 4px 0; }
+    .lead-deck { font-size: 11px; color: #555; display: block; margin-bottom: 8px; }
+    .coupon { border: 2px dashed #000; padding: 8px; text-align: center; cursor: pointer; margin: 8px 0; background: #fff; }
+    .coupon-border { border: 1px solid rgba(0,0,0,0.3); padding: 10px; }
+    .coupon-kicker { font-size: 9px; font-weight: 900; color: #b31921; display: block; }
+    .coupon-title { font-size: 16px; font-weight: 900; display: block; margin: 4px 0; }
+    .coupon-text { font-size: 10px; color: #555; }
+
+    /* 表单 */
+    .form-group { margin-bottom: 10px; }
+    .form-label { font-size: 11px; font-weight: 700; display: block; margin-bottom: 2px; }
+    .form-input, .form-textarea {
+      width: 100%; padding: 6px 8px;
+      border: 1px solid rgba(0,0,0,0.5); font-size: 12px;
+      background: #fff; outline: none;
+    }
+    .form-textarea { min-height: 60px; resize: vertical; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .btn-submit {
+      width: 100%; padding: 8px;
+      background: #000; color: #fff;
+      border: none; font-size: 13px; font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-submit:disabled { background: #888; }
 
     /* 我的页面 */
-    .profile-page { padding: 16px; }
-    .profile-card {
-      background: #fff; border: 1px solid #e0d5c5;
-      padding: 24px; text-align: center; margin-bottom: 16px;
-    }
-    .profile-avatar {
-      width: 64px; height: 64px; border-radius: 50%; background: #f0ece4;
-      margin: 0 auto 12px; display: flex; align-items: center; justify-content: center;
-      font-size: 28px;
-    }
-    .profile-name { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
-    .profile-id { font-size: 12px; color: #888; }
-    .info-card { background: #fff; border: 1px solid #e0d5c5; padding: 16px; margin-bottom: 12px; }
-    .info-title { font-size: 14px; font-weight: 600; color: #8b4513; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #f0ece4; }
-    .info-item { display: flex; justify-content: space-between; padding: 8px 0; font-size: 13px; border-bottom: 1px solid #f8f5f0; }
-    .info-item:last-child { border-bottom: none; }
-    .info-label { color: #888; }
-    .info-value { color: #333; font-weight: 500; }
-    .btn { background: #8b4513; color: #fff; border: none; padding: 10px 20px; border-radius: 6px; font-size: 14px; cursor: pointer; width: 100%; margin-top: 8px; }
-    .btn.secondary { background: #fff; color: #8b4513; border: 1px solid #8b4513; }
-    .btn.danger { background: #c0392b; }
+    .profile-card { border: 1px solid rgba(0,0,0,0.5); padding: 16px; text-align: center; background: #fff; margin: 8px; }
+    .profile-avatar { width: 48px; height: 48px; border-radius: 50%; background: #e8e8e0; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+    .profile-name { font-size: 16px; font-weight: 900; }
+    .profile-id { font-size: 10px; color: #888; }
+    .profile-btn { margin-top: 8px; padding: 6px 16px; background: #b31921; color: #fff; border: none; font-size: 12px; cursor: pointer; }
 
     /* 底部导航 */
     .tab-bar {
       position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
       width: 100%; max-width: 480px; background: #fff;
-      border-top: 1px solid #e0d5c5; display: flex; justify-content: space-around;
-      padding: 6px 0 10px; z-index: 100;
+      border-top: 1px solid rgba(0,0,0,0.3);
+      display: flex; justify-content: space-around;
+      padding: 4px 0 8px; z-index: 100;
     }
-    .tab-item { flex: 1; text-align: center; cursor: pointer; padding: 4px 0; color: #999; font-size: 11px; transition: color 0.2s; }
-    .tab-item.active { color: #8b4513; }
-    .tab-icon { font-size: 22px; line-height: 1; margin-bottom: 2px; display: block; }
+    .tab-item { flex: 1; text-align: center; cursor: pointer; padding: 2px 0; color: #999; font-size: 10px; }
+    .tab-item.active { color: #b31921; }
+    .tab-icon { font-size: 20px; line-height: 1; margin-bottom: 1px; display: block; }
 
     /* 弹窗 */
     .modal-overlay {
@@ -214,44 +404,51 @@
     }
     .modal-overlay.show { display: flex; }
     .modal {
-      background: #fff; border-radius: 12px; width: 90%; max-width: 360px;
-      max-height: 80vh; overflow-y: auto; padding: 24px;
+      background: #f6f6f2; border: 2px solid #000;
+      width: 90%; max-width: 340px;
+      max-height: 80vh; overflow-y: auto; padding: 20px;
+      position: relative;
     }
-    .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; text-align: center; }
-    .modal-close { position: absolute; right: 16px; top: 16px; font-size: 24px; cursor: pointer; color: #999; }
-    .modal-tabs { display: flex; margin-bottom: 16px; border-bottom: 1px solid #eee; }
-    .modal-tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; font-size: 14px; color: #888; }
-    .modal-tab.active { color: #8b4513; border-bottom: 2px solid #8b4513; }
+    .modal-close { position: absolute; right: 10px; top: 8px; font-size: 20px; cursor: pointer; }
+    .modal-title { font-size: 16px; font-weight: 900; margin-bottom: 12px; text-align: center; border-bottom: 2px solid #000; padding-bottom: 6px; }
+    .modal-tabs { display: flex; margin-bottom: 12px; border-bottom: 1px solid #000; }
+    .modal-tab { flex: 1; text-align: center; padding: 8px; cursor: pointer; font-size: 12px; font-weight: 700; }
+    .modal-tab.active { border-bottom: 2px solid #b31921; color: #b31921; }
 
     /* Toast */
     .toast {
       position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      background: rgba(0,0,0,0.75); color: #fff;
-      padding: 12px 24px; border-radius: 6px; font-size: 14px;
+      background: #000; color: #fff;
+      padding: 10px 20px; font-size: 12px; font-weight: 700;
       z-index: 200; display: none;
     }
     .toast.show { display: block; }
 
-    .loading { text-align: center; padding: 40px; color: #999; font-size: 13px; }
-    .empty { text-align: center; padding: 40px; color: #999; font-size: 13px; }
+    .loading { text-align: center; padding: 30px; font-size: 12px; color: #888; }
+    .empty { text-align: center; padding: 30px; font-size: 12px; color: #888; }
 
-    /* 管理员后台 */
-    .admin-panel { padding: 16px; }
-    .admin-card { background: #fff; border: 1px solid #e0d5c5; padding: 16px; margin-bottom: 12px; }
-    .admin-dish { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f8f5f0; }
+    /* 管理员 */
+    .admin-panel { padding: 8px; }
+    .admin-card { border: 1px solid rgba(0,0,0,0.5); padding: 10px; margin-bottom: 8px; background: #fff; }
+    .admin-dish { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px dotted rgba(0,0,0,0.2); font-size: 11px; }
     .admin-dish:last-child { border-bottom: none; }
-    .admin-dish-name { font-size: 14px; font-weight: 500; }
-    .admin-dish-status { font-size: 11px; padding: 2px 8px; border-radius: 8px; }
-    .status-pending { background: #fff3cd; color: #856404; }
-    .status-active { background: #d4edda; color: #155724; }
-    .admin-actions { display: flex; gap: 8px; }
-    .admin-actions button { padding: 4px 10px; font-size: 12px; border: none; border-radius: 4px; cursor: pointer; }
-    .btn-approve { background: #28a745; color: #fff; }
-    .btn-reject { background: #dc3545; color: #fff; }
+    .btn-approve { background: #28a745; color: #fff; border: none; padding: 2px 8px; font-size: 10px; cursor: pointer; }
+    .btn-reject { background: #dc3545; color: #fff; border: none; padding: 2px 8px; font-size: 10px; cursor: pointer; }
+    .back-bar { padding: 6px 8px; background: #faf8f3; border-bottom: 1px solid rgba(0,0,0,0.5); display: flex; align-items: center; gap: 6px; }
+    .back-bar button { background: none; border: none; font-size: 12px; cursor: pointer; font-weight: 700; }
 
-    /* 返回按钮 */
-    .back-bar { padding: 10px 16px; background: #faf8f3; border-bottom: 1px solid #e0d5c5; display: flex; align-items: center; gap: 8px; }
-    .back-bar button { background: none; border: none; color: #8b4513; font-size: 14px; cursor: pointer; }
+    /* 登录按钮 */
+    .login-corner {
+      position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+      background: #b31921; color: #fff; border: none;
+      padding: 3px 10px; font-size: 10px; font-weight: 700;
+      cursor: pointer;
+    }
+    .user-corner {
+      position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+      font-size: 10px; font-weight: 700; color: #b31921;
+      border: 1px solid #b31921; padding: 2px 8px;
+    }
   </style>
 </head>
 <body>
@@ -259,131 +456,235 @@
     <div class="page-content" id="pageContent">
       <!-- 首页 -->
       <div class="page active" id="page-home">
-        <div class="masthead" id="homeMasthead">
-          <div class="masthead-kicker">Campus Dining Daily</div>
-          <div class="masthead-title">明天吃什么日报</div>
-          <div class="masthead-sub">北京信息科技大学食堂风味指南</div>
-          <div class="masthead-date" id="homeDate">加载中...</div>
-        </div>
-        <div class="announcement-bar" id="homeAnnouncement">正在获取公告...</div>
-        <div id="heroSection">加载中...</div>
-        <div class="random-box">
-          <div class="random-title">不知道吃什么？</div>
-          <div class="random-result" id="randomName">点击下方按钮</div>
-          <div class="random-detail" id="randomPlace">让命运决定你的午餐</div>
-          <button class="random-btn" onclick="rollRandom()">随机选一个</button>
+        <div class="paper-sheet front-paper">
+          <div class="paper-inner">
+            <div class="masthead" style="position:relative">
+              <div class="issue-strip">
+                <span>校园食堂独立观察</span>
+                <span id="homeDate">加载中...</span>
+                <span id="homeNetwork">实时数据</span>
+              </div>
+              <div class="masthead-title" id="homeMastheadTitle">明天吃什么日报</div>
+              <div class="masthead-subtitle">MINGTIAN EAT WHAT DAILY</div>
+              <div class="double-rule"></div>
+              <div class="issue-banner">
+                <span class="banner-star">&#10022;</span>
+                <span class="banner-star">&#10022;</span>
+                <span class="banner-tag">每日一菜 &#183; 帮你吃得更好</span>
+                <span class="banner-star">&#10022;</span>
+                <span class="banner-star">&#10022;</span>
+                <div class="edition-badge">第 01 版</div>
+              </div>
+            </div>
+
+            <div class="front-body">
+              <div class="front-main" id="frontMain"></div>
+              <div class="front-sidebar" id="frontSidebar"></div>
+            </div>
+
+            <div class="section-divider">
+              <div class="divider-line"></div>
+              <div class="divider-text">一起参与 &#183; 让食堂更好吃</div>
+              <div class="divider-line"></div>
+            </div>
+
+            <div class="action-grid">
+              <div class="action-card" onclick="switchTab('submit')">
+                <span class="action-edition">投稿版</span>
+                <span class="action-icon">&#9998;</span>
+                <span class="action-title">我要投稿</span>
+                <span class="action-sub">分享你发现的好吃的</span>
+                <div class="action-cta"><span class="action-cta-text">去投稿</span><span class="action-cta-arrow">&#8250;</span></div>
+              </div>
+              <div class="action-card action-card-primary" onclick="switchTab('ranking')">
+                <span class="action-edition">评分版</span>
+                <span class="action-icon">&#9733;</span>
+                <span class="action-title">给今日榜单打分</span>
+                <span class="action-sub">你的评分决定榜单</span>
+                <div class="action-cta"><span class="action-cta-text">去评分</span><span class="action-cta-arrow">&#8250;</span></div>
+              </div>
+              <div class="action-card" onclick="switchTab('category')">
+                <span class="action-edition">公告分类</span>
+                <span class="action-icon">&#128220;</span>
+                <span class="action-title">分类浏览</span>
+                <span class="action-sub">按类别查找菜品</span>
+                <div class="action-cta"><span class="action-cta-text">去查看</span><span class="action-cta-arrow">&#8250;</span></div>
+              </div>
+            </div>
+
+            <div class="front-sponsor">
+              <span>校园食堂小报</span>
+              <span>WHITE PAPER &#183; BLACK INK &#183; RED MARKS</span>
+            </div>
+
+            <div class="paper-footer">
+              <span>第 01 版</span>
+              <span onclick="switchTab('profile')">个人资料 &#8250;</span>
+              <span onclick="rollRandom()">随机推荐 &#8250;</span>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- 榜单 -->
       <div class="page" id="page-ranking">
-        <div class="masthead">
-          <div class="masthead-title" style="font-size:20px">风味榜单</div>
+        <div class="paper-sheet ranking-paper">
+          <div class="paper-inner">
+            <div class="masthead compact">
+              <div class="issue-strip">
+                <span>榜单版</span>
+                <span id="rankDate">加载中...</span>
+                <span>实时数据</span>
+              </div>
+              <div class="ranking-section-title">今日风味榜</div>
+              <div class="search-box">
+                <div class="search-input-wrap">
+                  <span class="search-icon">&#128269;</span>
+                  <input type="text" class="search-input" id="searchInput" placeholder="搜索菜品名称..." oninput="filterRanking()">
+                  <span class="search-clear" id="searchClear" style="display:none" onclick="clearSearch()">&#215;</span>
+                </div>
+                <div class="search-result-count" id="searchCount" style="display:none"></div>
+              </div>
+              <div class="double-rule"></div>
+            </div>
+
+            <div class="ranking-table" id="rankingTable">
+              <div class="ranking-row top-row">
+                <span class="rank-col">名次</span>
+                <span class="dish-col">菜品头条与投票</span>
+                <span class="score-col">得分</span>
+                <span class="score-col favorite-col-header">收藏</span>
+              </div>
+            </div>
+
+            <div id="favoriteSection"></div>
+
+            <div class="paper-footer">
+              <span>第 02 版</span>
+              <span onclick="switchTab('submit')">我要投稿</span>
+            </div>
+          </div>
         </div>
-        <div class="search-box">
-          <input type="text" class="search-input" id="searchInput" placeholder="搜索菜品名称..." oninput="filterRanking()">
-        </div>
-        <div class="category-tags" id="rankingTags"></div>
-        <div class="dish-list" id="rankingList">加载中...</div>
       </div>
 
       <!-- 分类 -->
       <div class="page" id="page-category">
-        <div class="masthead">
-          <div class="masthead-title" style="font-size:20px">分类浏览</div>
+        <div class="paper-sheet">
+          <div class="paper-inner">
+            <div class="masthead compact">
+              <div class="issue-strip">
+                <span>分类版</span>
+                <span id="catDate">加载中...</span>
+                <span>实时数据</span>
+              </div>
+              <div class="ranking-section-title">分类浏览</div>
+              <div class="double-rule"></div>
+            </div>
+            <div class="category-grid" id="categoryGrid">加载中...</div>
+            <div id="categoryDishes" style="margin-top:8px"></div>
+            <div class="paper-footer">
+              <span>第 03 版</span>
+              <span onclick="switchTab('home')">返回首页</span>
+            </div>
+          </div>
         </div>
-        <div class="category-tags" id="categoryTags" style="padding:16px"></div>
-        <div class="section-title">该分类下的菜品</div>
-        <div class="dish-list" id="categoryList"><div class="empty">点击上方分类查看菜品</div></div>
       </div>
 
       <!-- 投稿 -->
       <div class="page" id="page-submit">
-        <div class="masthead">
-          <div class="masthead-title" style="font-size:20px">投稿</div>
-        </div>
-        <div class="form-page">
-          <div class="form-group">
-            <label class="form-label">菜品名称 *</label>
-            <input type="text" class="form-input" id="submitName" placeholder="例如 黄焖鸡米饭">
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">分类</label>
-              <input type="text" class="form-input" id="submitCategory" placeholder="盖饭/粉面">
+        <div class="paper-sheet submit-paper">
+          <div class="paper-inner">
+            <div class="masthead compact">
+              <div class="issue-strip">
+                <span>投稿版</span>
+                <span id="subDate">加载中...</span>
+                <span>Web端</span>
+              </div>
+              <div class="ranking-section-title">把新菜写进明天</div>
+              <div class="double-rule"></div>
             </div>
-            <div class="form-group">
-              <label class="form-label">楼层</label>
-              <input type="text" class="form-input" id="submitFloor" placeholder="一楼">
+            <div style="padding:8px">
+              <span class="kicker">征稿启事</span>
+              <span class="submit-headline">食堂窗口很多，好吃的需要被看见。</span>
+              <span class="lead-deck">填写下方表单，补上菜名、楼层、窗口和一句描述。通过审核后进入榜单。</span>
+              <div class="form-page">
+                <div class="form-group">
+                  <label class="form-label">菜品名称 *</label>
+                  <input type="text" class="form-input" id="submitName" placeholder="例如 黄焖鸡米饭">
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">分类</label>
+                    <input type="text" class="form-input" id="submitCategory" placeholder="盖饭/粉面">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">楼层</label>
+                    <input type="text" class="form-input" id="submitFloor" placeholder="一楼">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">店铺/窗口</label>
+                  <input type="text" class="form-input" id="submitShop" placeholder="窗口名称">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">一句描述</label>
+                  <textarea class="form-textarea" id="submitDesc" placeholder="口味、份量、适合什么时候吃"></textarea>
+                </div>
+                <button class="btn-submit" id="submitBtn" onclick="submitDish()">提交投稿</button>
+              </div>
+            </div>
+            <div class="paper-footer">
+              <span>第 04 版</span>
+              <span onclick="switchTab('home')">返回首页</span>
             </div>
           </div>
-          <div class="form-group">
-            <label class="form-label">店铺/窗口</label>
-            <input type="text" class="form-input" id="submitShop" placeholder="窗口名称">
-          </div>
-          <div class="form-group">
-            <label class="form-label">一句描述</label>
-            <textarea class="form-textarea" id="submitDesc" placeholder="口味、份量、适合什么时候吃"></textarea>
-          </div>
-          <button class="form-submit" id="submitBtn" onclick="submitDish()">提交投稿</button>
         </div>
       </div>
 
       <!-- 我的 -->
       <div class="page" id="page-profile">
-        <div class="masthead">
-          <div class="masthead-title" style="font-size:20px">我的</div>
+        <div class="paper-sheet">
+          <div class="paper-inner">
+            <div class="masthead compact">
+              <div class="issue-strip">
+                <span>个人版</span>
+                <span id="proDate">加载中...</span>
+                <span>Web端</span>
+              </div>
+              <div class="ranking-section-title">我的</div>
+              <div class="double-rule"></div>
+            </div>
+            <div id="profileContent"></div>
+            <div class="paper-footer">
+              <span>第 05 版</span>
+              <span onclick="switchTab('home')">返回首页</span>
+            </div>
+          </div>
         </div>
-        <div class="profile-page" id="profileContent"></div>
       </div>
 
-      <!-- 管理员后台 -->
+      <!-- 管理员 -->
       <div class="page" id="page-admin">
         <div class="back-bar">
           <button onclick="switchTab('home')">&#8592; 返回</button>
-          <span style="font-weight:600">管理员后台</span>
+          <span style="font-weight:900">管理员后台</span>
         </div>
-        <div class="admin-panel" id="adminPanel">
-          <div class="admin-card">
-            <div class="info-title">待审核菜品</div>
-            <div id="adminDishes">加载中...</div>
-          </div>
-          <div class="admin-card">
-            <div class="info-title">设置公告</div>
-            <textarea class="form-textarea" id="adminAnnouncement" placeholder="输入公告内容..."></textarea>
-            <button class="btn" onclick="setAnnouncement()">保存公告</button>
-          </div>
-          <div class="admin-card">
-            <div class="info-title">创建分类</div>
-            <input type="text" class="form-input" id="adminCategoryName" placeholder="分类名称">
-            <button class="btn" onclick="createCategory()">创建分类</button>
-          </div>
-        </div>
+        <div class="admin-panel" id="adminPanel"></div>
       </div>
     </div>
 
     <!-- 底部导航 -->
     <div class="tab-bar" id="tabBar">
-      <div class="tab-item active" onclick="switchTab('home')">
-        <span class="tab-icon">&#128240;</span><span>首页</span>
-      </div>
-      <div class="tab-item" onclick="switchTab('ranking')">
-        <span class="tab-icon">&#127942;</span><span>榜单</span>
-      </div>
-      <div class="tab-item" onclick="switchTab('category')">
-        <span class="tab-icon">&#128451;</span><span>分类</span>
-      </div>
-      <div class="tab-item" onclick="switchTab('submit')">
-        <span class="tab-icon">&#9998;</span><span>投稿</span>
-      </div>
-      <div class="tab-item" onclick="switchTab('profile')">
-        <span class="tab-icon">&#128100;</span><span>我的</span>
-      </div>
+      <div class="tab-item active" onclick="switchTab('home')"><span class="tab-icon">&#128240;</span><span>首页</span></div>
+      <div class="tab-item" onclick="switchTab('ranking')"><span class="tab-icon">&#127942;</span><span>榜单</span></div>
+      <div class="tab-item" onclick="switchTab('category')"><span class="tab-icon">&#128451;</span><span>分类</span></div>
+      <div class="tab-item" onclick="switchTab('submit')"><span class="tab-icon">&#9998;</span><span>投稿</span></div>
+      <div class="tab-item" onclick="switchTab('profile')"><span class="tab-icon">&#128100;</span><span>我的</span></div>
     </div>
 
     <!-- 登录弹窗 -->
     <div class="modal-overlay" id="loginModal">
-      <div class="modal" style="position:relative">
+      <div class="modal">
         <div class="modal-close" onclick="closeModal('loginModal')">&times;</div>
         <div class="modal-title" id="loginModalTitle">登录</div>
         <div class="modal-tabs">
@@ -391,44 +692,26 @@
           <div class="modal-tab" onclick="switchLoginTab('register')" id="tab-register">注册</div>
         </div>
         <div id="loginForm">
-          <div class="form-group">
-            <label class="form-label">用户名</label>
-            <input type="text" class="form-input" id="loginUsername" placeholder="用户名">
-          </div>
-          <div class="form-group">
-            <label class="form-label">密码</label>
-            <input type="password" class="form-input" id="loginPassword" placeholder="密码">
-          </div>
-          <button class="form-submit" onclick="doLogin()">登录</button>
+          <div class="form-group"><label class="form-label">用户名</label><input type="text" class="form-input" id="loginUsername" placeholder="用户名"></div>
+          <div class="form-group"><label class="form-label">密码</label><input type="password" class="form-input" id="loginPassword" placeholder="密码"></div>
+          <button class="btn-submit" onclick="doLogin()">登录</button>
         </div>
         <div id="registerForm" style="display:none">
-          <div class="form-group">
-            <label class="form-label">用户名</label>
-            <input type="text" class="form-input" id="regUsername" placeholder="用户名">
-          </div>
-          <div class="form-group">
-            <label class="form-label">密码</label>
-            <input type="password" class="form-input" id="regPassword" placeholder="至少4位">
-          </div>
-          <div class="form-group">
-            <label class="form-label">昵称</label>
-            <input type="text" class="form-input" id="regNickname" placeholder="显示名称">
-          </div>
-          <button class="form-submit" onclick="doRegister()">注册</button>
+          <div class="form-group"><label class="form-label">用户名</label><input type="text" class="form-input" id="regUsername" placeholder="用户名"></div>
+          <div class="form-group"><label class="form-label">密码</label><input type="password" class="form-input" id="regPassword" placeholder="至少4位"></div>
+          <div class="form-group"><label class="form-label">昵称</label><input type="text" class="form-input" id="regNickname" placeholder="显示名称"></div>
+          <button class="btn-submit" onclick="doRegister()">注册</button>
         </div>
       </div>
     </div>
 
     <!-- 管理员登录弹窗 -->
     <div class="modal-overlay" id="adminModal">
-      <div class="modal" style="position:relative">
+      <div class="modal">
         <div class="modal-close" onclick="closeModal('adminModal')">&times;</div>
         <div class="modal-title">管理员登录</div>
-        <div class="form-group">
-          <label class="form-label">管理密码</label>
-          <input type="password" class="form-input" id="adminPassword" placeholder="输入管理密码">
-        </div>
-        <button class="form-submit" onclick="doAdminLogin()">登录后台</button>
+        <div class="form-group"><label class="form-label">管理密码</label><input type="password" class="form-input" id="adminPassword" placeholder="输入管理密码"></div>
+        <button class="btn-submit" onclick="doAdminLogin()">登录后台</button>
       </div>
     </div>
 
@@ -436,43 +719,23 @@
   </div>
 
   <script>
-    // ============ 全局状态 ============
-    let allDishes = [];
-    let allCategories = [];
-    let canteenData = [];
-    let currentCategory = '';
-    let currentUser = null;
-    let favoriteIds = new Set();
-    let adminToken = localStorage.getItem('adminToken') || null;
-    let adminTapCount = 0;
-    let adminTapTimer = 0;
+    let allDishes = [], allCategories = [], canteenData = [];
+    let currentUser = null, favoriteIds = new Set(), adminToken = localStorage.getItem('adminToken') || null;
+    let adminTapCount = 0, adminTapTimer = 0;
 
-    // ============ 工具函数 ============
     function $(id) { return document.getElementById(id); }
-
     function showToast(msg) {
-      const t = $('toast');
-      t.textContent = msg;
-      t.classList.add('show');
+      const t = $('toast'); t.textContent = msg; t.classList.add('show');
       setTimeout(() => t.classList.remove('show'), 2000);
     }
-
     function formatDate() {
-      const now = new Date();
-      const y = now.getFullYear();
-      const m = String(now.getMonth() + 1).padStart(2, '0');
-      const d = String(now.getDate()).padStart(2, '0');
-      const week = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][now.getDay()];
-      return `${y}.${m}.${d} ${week}`;
+      const n = new Date();
+      return `${n.getFullYear()}.${String(n.getMonth()+1).padStart(2,'0')}.${String(n.getDate()).padStart(2,'0')}`;
     }
-
     async function fetchJSON(url, options = {}) {
       const token = currentUser?.token;
-      if (token && !options.headers) {
-        options.headers = { 'x-user-token': token };
-      } else if (token) {
-        options.headers = { ...options.headers, 'x-user-token': token };
-      }
+      if (token && !options.headers) options.headers = { 'x-user-token': token };
+      else if (token) options.headers = { ...options.headers, 'x-user-token': token };
       const res = await fetch(url, options);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
@@ -480,61 +743,25 @@
       return data.data;
     }
 
-    function getPlaceholderImg() {
-      return 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect fill="%23f0ece4" width="100" height="100"/><text fill="%23999" x="50" y="55" text-anchor="middle" font-size="12">暂无图片</text></svg>';
-    }
-
-    function resolveImg(url) {
-      if (!url) return getPlaceholderImg();
-      if (url.startsWith('data:')) return url;
-      return url;
-    }
-
-    // ============ 登录状态 ============
     function loadUser() {
       const saved = localStorage.getItem('currentUser');
-      if (saved) {
-        try { currentUser = JSON.parse(saved); } catch(e) { currentUser = null; }
-      }
+      if (saved) { try { currentUser = JSON.parse(saved); } catch(e) { currentUser = null; } }
       updateLoginUI();
     }
-
-    function saveUser(user) {
-      currentUser = user;
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      updateLoginUI();
-    }
-
-    function logout() {
-      currentUser = null;
-      favoriteIds = new Set();
-      localStorage.removeItem('currentUser');
-      updateLoginUI();
-      renderProfile();
-      showToast('已退出登录');
-    }
-
+    function saveUser(user) { currentUser = user; localStorage.setItem('currentUser', JSON.stringify(user)); updateLoginUI(); }
+    function logout() { currentUser = null; favoriteIds = new Set(); localStorage.removeItem('currentUser'); updateLoginUI(); renderProfile(); showToast('已退出登录'); }
     function updateLoginUI() {
-      const masthead = $('homeMasthead');
-      const existing = masthead.querySelector('.login-btn, .user-label');
+      const titleEl = $('homeMastheadTitle');
+      const existing = titleEl.parentElement.querySelector('.login-corner, .user-corner');
       if (existing) existing.remove();
-
       const el = document.createElement('span');
-      if (currentUser) {
-        el.className = 'user-label';
-        el.textContent = currentUser.nickname;
-      } else {
-        el.className = 'login-btn';
-        el.textContent = '登录';
-        el.onclick = (e) => { e.stopPropagation(); openModal('loginModal'); };
-      }
-      masthead.appendChild(el);
+      if (currentUser) { el.className = 'user-corner'; el.textContent = currentUser.nickname; }
+      else { el.className = 'login-corner'; el.textContent = '登录'; el.onclick = (e) => { e.stopPropagation(); openModal('loginModal'); }; }
+      titleEl.parentElement.appendChild(el);
     }
 
-    // ============ 弹窗 ============
     function openModal(id) { $(id).classList.add('show'); }
     function closeModal(id) { $(id).classList.remove('show'); }
-
     function switchLoginTab(tab) {
       document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
       $('tab-' + tab).classList.add('active');
@@ -543,463 +770,325 @@
       $('loginModalTitle').textContent = tab === 'login' ? '登录' : '注册';
     }
 
-    // ============ 登录/注册 ============
     async function doLogin() {
-      const username = $('loginUsername').value.trim();
-      const password = $('loginPassword').value;
+      const username = $('loginUsername').value.trim(), password = $('loginPassword').value;
       if (!username || !password) { showToast('请填写用户名和密码'); return; }
       try {
-        const data = await fetchJSON('/api/webLogin', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ username, password })
-        });
-        saveUser(data);
-        closeModal('loginModal');
-        showToast('登录成功');
-        loadFavorites();
-        renderProfile();
-      } catch (err) {
-        showToast(err.message);
-      }
+        const data = await fetchJSON('/api/webLogin', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ username, password }) });
+        saveUser(data); closeModal('loginModal'); showToast('登录成功'); loadFavorites(); renderProfile();
+      } catch (err) { showToast(err.message); }
     }
-
     async function doRegister() {
-      const username = $('regUsername').value.trim();
-      const password = $('regPassword').value;
-      const nickname = $('regNickname').value.trim() || username;
+      const username = $('regUsername').value.trim(), password = $('regPassword').value, nickname = $('regNickname').value.trim() || username;
       if (!username || !password) { showToast('请填写用户名和密码'); return; }
       if (password.length < 4) { showToast('密码至少4位'); return; }
       try {
-        const data = await fetchJSON('/api/webRegister', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ username, password, nickname })
-        });
-        saveUser(data);
-        closeModal('loginModal');
-        showToast('注册成功');
-        renderProfile();
-      } catch (err) {
-        showToast(err.message);
-      }
+        const data = await fetchJSON('/api/webRegister', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ username, password, nickname }) });
+        saveUser(data); closeModal('loginModal'); showToast('注册成功'); renderProfile();
+      } catch (err) { showToast(err.message); }
     }
 
-    // ============ 收藏 ============
     async function loadFavorites() {
       if (!currentUser) return;
-      try {
-        const ids = await fetchJSON('/api/favorites');
-        favoriteIds = new Set(ids);
-        renderRanking(allDishes);
-        renderProfile();
-      } catch (e) {}
+      try { const ids = await fetchJSON('/api/favorites'); favoriteIds = new Set(ids); }
+      catch (e) { favoriteIds = new Set(); }
     }
-
     async function toggleFavorite(dishId) {
       if (!currentUser) { openModal('loginModal'); return; }
       const id = String(dishId);
       try {
         if (favoriteIds.has(id)) {
-          await fetchJSON('/api/removeFavorite', {
-            method: 'POST',
-            headers: { 'content-type': 'application/json' },
-            body: JSON.stringify({ dishId: id })
-          });
-          favoriteIds.delete(id);
-          showToast('已取消收藏');
+          await fetchJSON('/api/removeFavorite', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ dishId: id }) });
+          favoriteIds.delete(id); showToast('已取消收藏');
         } else {
-          await fetchJSON('/api/addFavorite', {
-            method: 'POST',
-            headers: { 'content-type': 'application/json' },
-            body: JSON.stringify({ dishId: id })
-          });
-          favoriteIds.add(id);
-          showToast('已收藏');
+          await fetchJSON('/api/addFavorite', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ dishId: id }) });
+          favoriteIds.add(id); showToast('已收藏');
         }
-        renderRanking(allDishes);
-        renderProfile();
-      } catch (err) {
-        showToast(err.message);
-      }
+        renderHome(); renderRanking(); renderProfile();
+      } catch (err) { showToast(err.message); }
     }
-
-    // ============ 评分 ============
     async function rateDish(dishId, score) {
       if (!currentUser) { openModal('loginModal'); return; }
       try {
-        await fetchJSON('/api/rateDish', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ dishId: String(dishId), score })
-        });
-        showToast(`评分 ${score} 星成功`);
-        await reloadDishes();
-      } catch (err) {
-        showToast(err.message);
-      }
+        await fetchJSON('/api/rateDish', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ dishId: String(dishId), score }) });
+        showToast(`评分 ${score} 星成功`); await reloadDishes();
+      } catch (err) { showToast(err.message); }
     }
-
     async function reloadDishes() {
-      try {
-        allDishes = await fetchJSON('/api/rankings?schoolId=bistu&limit=20').catch(() => []);
-        renderHome();
-        renderRanking(allDishes);
-      } catch (e) {}
+      try { allDishes = await fetchJSON('/api/rankings?schoolId=bistu&limit=20').catch(() => []); renderHome(); renderRanking(); }
+      catch (e) {}
     }
 
-    // ============ 页面切换 ============
     function switchTab(tab) {
       if (tab === 'admin' && !adminToken) { openModal('adminModal'); return; }
-
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-
       const tabBar = $('tabBar');
-      if (tab === 'admin') {
-        tabBar.style.display = 'none';
-      } else {
+      if (tab === 'admin') { tabBar.style.display = 'none'; }
+      else {
         tabBar.style.display = 'flex';
-        const tabEls = tabBar.querySelectorAll('.tab-item');
-        const tabMap = { home: 0, ranking: 1, category: 2, submit: 3, profile: 4 };
-        if (tabMap[tab] !== undefined) tabEls[tabMap[tab]].classList.add('active');
+        const map = { home: 0, ranking: 1, category: 2, submit: 3, profile: 4 };
+        if (map[tab] !== undefined) tabBar.children[map[tab]].classList.add('active');
       }
-
       $(`page-${tab}`).classList.add('active');
-      if (tab === 'ranking' && allDishes.length) renderRanking(allDishes);
-      if (tab === 'category' && allCategories.length) renderCategoryTags();
+      if (tab === 'ranking') renderRanking();
+      if (tab === 'category') renderCategory();
       if (tab === 'profile') renderProfile();
       if (tab === 'admin') renderAdmin();
     }
 
-    // ============ 首页渲染 ============
+    // ===== 首页渲染 =====
     function renderHome() {
       $('homeDate').textContent = formatDate();
-      if (!allDishes.length) {
-        $('heroSection').innerHTML = '<div class="loading">暂无数据</div>';
-        return;
-      }
+      if (!allDishes.length) { $('frontMain').innerHTML = '<div class="loading">暂无数据</div>'; return; }
       const [lead, feature, third] = allDishes;
-      let html = '';
+
+      let mainHtml = '';
       if (lead) {
-        const place = [lead.canteenName, lead.floorName, lead.shopName].filter(Boolean).join(' · ');
-        html += `
-          <div class="hero-card">
-            <img class="hero-image" src="${resolveImg(lead.imageUrl)}" alt="${lead.name}" onerror="this.src='${getPlaceholderImg()}'">
-            <div class="hero-body">
-              <div class="hero-headline">${lead.headline || lead.name}</div>
-              <div class="hero-place">${place || '校园食堂'}</div>
-              <div class="hero-desc">${lead.description || '等待同学补充风味记录。'}</div>
-              <div class="hero-meta">
-                <span class="hero-score">★ ${Number(lead.avgScore || 0).toFixed(1)}</span>
-                <span>${lead.ratingCount || 0} 人评价</span>
-                <span class="category-tag">${lead.categoryName || '未分类'}</span>
-              </div>
+        const place = [lead.canteenName, lead.floorName, lead.shopName].filter(Boolean).join(' &#183; ');
+        mainHtml += `
+          <div class="lead-card" onclick="switchTab('ranking')">
+            <span class="topic-tag">随机推荐</span>
+            <div class="front-headline">${lead.headline || lead.name}</div>
+            <div class="news-photo"><img src="${resolveImg(lead.imageUrl)}" alt="${lead.name}" onerror="this.style.display='none'"></div>
+            <div class="lead-meta-row">${lead.name}</div>
+            <div class="lead-stat-row">
+              <span class="lead-stat"><span class="stat-icon">地</span><span class="stat-text">${place || '校园食堂'}</span></span>
             </div>
+            <div class="info-row"><span class="info-icon">推</span><div class="info-body"><span class="info-label">推荐地点</span><span class="info-text">${place || '校园食堂'}</span></div></div>
+            <div class="info-row"><span class="info-icon">群</span><div class="info-body"><span class="info-label">适合人群</span><span class="info-text">选择困难 / 想换口味 / 不知道吃什么</span></div></div>
           </div>`;
       }
-      if (feature || third) {
-        html += '<div class="sub-hero">';
-        [feature, third].filter(Boolean).forEach(d => {
-          const place = [d.canteenName, d.floorName].filter(Boolean).join(' · ');
-          html += `
-            <div class="sub-card">
-              <img class="sub-image" src="${resolveImg(d.imageUrl)}" alt="${d.name}" onerror="this.src='${getPlaceholderImg()}'">
-              <div class="sub-body">
-                <div class="sub-name">${d.name}</div>
-                <div class="sub-place">${place || '校园食堂'}</div>
-                <div class="sub-meta">
-                  <span class="hero-score">★ ${Number(d.avgScore || 0).toFixed(1)}</span>
-                  <span>${d.ratingCount || 0}人</span>
-                </div>
-              </div>
-            </div>`;
-        });
-        html += '</div>';
-      }
-      $('heroSection').innerHTML = html;
+
+      mainHtml += '<div class="lead-briefs">';
+      [feature, third].filter(Boolean).forEach((d, i) => {
+        mainHtml += `
+          <div class="lead-brief">
+            <div class="lead-brief-media"><img src="${resolveImg(d.imageUrl)}" alt="${d.name}" onerror="this.style.display='none'"><span class="lead-brief-label">${i === 0 ? '二条' : '三条'}</span></div>
+            <div class="lead-brief-title">${d.headline || d.name}</div>
+            <div class="lead-brief-meta"><span>${d.name}</span><span>${Number(d.avgScore||0).toFixed(1)} 分</span></div>
+            <div class="lead-brief-text">${d.description || ''}</div>
+          </div>`;
+      });
+      mainHtml += '</div>';
+      mainHtml += '<div class="info-row info-row-warn"><span class="info-icon">注</span><div class="info-body"><span class="info-label">换一家</span><span class="info-text">不想去这个窗口？点一下随机推荐或去榜单看看。</span></div></div>';
+      $('frontMain').innerHTML = mainHtml;
+
+      let sideHtml = '';
+      sideHtml += `
+        <div class="side-card rank-card">
+          <div class="side-card-head"><span class="side-label">榜</span><span class="side-title">今日风味榜</span></div>
+          ${allDishes.slice(0,3).map((d,i) => `
+            <div class="mini-rank" onclick="switchTab('ranking')">
+              <span class="mini-rank-num">${i+1}</span>
+              <div class="mini-rank-copy"><span class="mini-rank-name">${d.name}</span><span class="mini-rank-shop">${d.shopName || d.canteenName || ''}</span></div>
+              <span class="mini-rank-score">${Number(d.avgScore||0).toFixed(1)}</span>
+              <span class="mini-rank-arrow">&#8250;</span>
+            </div>
+          `).join('')}
+          <span class="side-link" onclick="switchTab('ranking')">榜单摘要</span>
+        </div>`;
+      sideHtml += `
+        <div class="side-card random-card" onclick="rollRandom()">
+          <div class="random-head"><span class="random-label">随机推荐</span><span class="random-refresh">换一个 &#8250;</span></div>
+          <div class="random-body"><span class="random-shop" id="sideRandomShop">点击换一个</span><span class="random-place" id="sideRandomPlace">让命运决定</span></div>
+        </div>`;
+      $('frontSidebar').innerHTML = sideHtml;
     }
 
-    // ============ 随机推荐 ============
     function rollRandom() {
       if (!canteenData.length) { showToast('暂无食堂数据'); return; }
-      const canteen = canteenData[Math.floor(Math.random() * canteenData.length)];
-      if (!canteen.floors || !canteen.floors.length) { showToast('暂无窗口数据'); return; }
-      const floor = canteen.floors[Math.floor(Math.random() * canteen.floors.length)];
-      if (!floor.shops || !floor.shops.length) { showToast('暂无窗口数据'); return; }
-      const shop = floor.shops[Math.floor(Math.random() * floor.shops.length)];
-      $('randomName').textContent = shop;
-      $('randomPlace').textContent = `${canteen.name} · ${floor.name}`;
+      const c = canteenData[Math.floor(Math.random()*canteenData.length)];
+      if (!c.floors?.length) { showToast('暂无窗口'); return; }
+      const f = c.floors[Math.floor(Math.random()*c.floors.length)];
+      if (!f.shops?.length) { showToast('暂无窗口'); return; }
+      const s = f.shops[Math.floor(Math.random()*f.shops.length)];
+      const shopEl = $('sideRandomShop');
+      if (shopEl) { shopEl.textContent = s; $('sideRandomPlace').textContent = `${c.name} &#183; ${f.name}`; }
+      else { showToast(`${c.name} &#183; ${f.name} &#183; ${s}`); }
     }
 
-    // ============ 榜单 ============
-    function renderRanking(dishes) {
+    // ===== 榜单渲染 =====
+    function renderRanking() {
+      $('rankDate').textContent = formatDate();
       const keyword = ($('searchInput').value || '').trim().toLowerCase();
-      const filtered = keyword ? dishes.filter(d => (d.name || '').toLowerCase().includes(keyword)) : dishes;
-      const catFiltered = currentCategory ? filtered.filter(d => d.categoryName === currentCategory) : filtered;
+      const filtered = keyword ? allDishes.filter(d => (d.name||'').toLowerCase().includes(keyword)) : allDishes;
+      $('searchClear').style.display = keyword ? 'inline' : 'none';
+      $('searchCount').style.display = keyword ? 'block' : 'none';
+      $('searchCount').textContent = keyword ? `找到 ${filtered.length} 个结果` : '';
 
-      if (!catFiltered.length) {
-        $('rankingList').innerHTML = '<div class="empty">没有找到匹配的菜品</div>';
-        return;
+      let html = `
+        <div class="ranking-row top-row">
+          <span class="rank-col">名次</span>
+          <span class="dish-col">菜品头条与投票</span>
+          <span class="score-col">得分</span>
+          <span class="score-col favorite-col-header">收藏</span>
+        </div>`;
+      if (!filtered.length) {
+        html += '<div class="no-result"><div class="no-result-text">未找到相关菜品</div><div class="no-result-hint">换个关键词试试</div></div>';
+      } else {
+        html += filtered.map((d,i) => rankingRowHTML(d, i+1)).join('');
       }
-      $('rankingList').innerHTML = catFiltered.map((d, i) => dishItemHTML(d, i + 1)).join('');
+      $('rankingTable').innerHTML = html;
+
+      // 我的收藏
+      const favDishes = allDishes.filter(d => favoriteIds.has(String(d.id)));
+      if (favDishes.length) {
+        $('favoriteSection').innerHTML = `
+          <div class="favorite-section">
+            <div class="ranking-section-title" style="font-size:16px">我的收藏</div>
+            <div class="double-rule"></div>
+            <div class="ranking-table">
+              <div class="ranking-row top-row">
+                <span class="dish-col">菜品</span>
+                <span class="score-col">窗口</span>
+                <span class="score-col favorite-col-header">操作</span>
+              </div>
+              ${favDishes.map(d => `
+                <div class="ranking-row">
+                  <span class="dish-col"><span class="dish-headline">${d.headline||d.name}</span><span class="dish-name">${d.name}</span></span>
+                  <span class="score-col"><span class="score-number" style="font-size:11px">${d.shopName||'--'}</span></span>
+                  <span class="score-col favorite-col"><span class="favorite-icon favorited" onclick="toggleFavorite('${d.id}')">&#10084;</span></span>
+                </div>
+              `).join('')}
+            </div>
+          </div>`;
+      } else {
+        $('favoriteSection').innerHTML = '';
+      }
     }
 
-    function dishItemHTML(d, rank) {
-      const place = [d.canteenName, d.floorName, d.shopName].filter(Boolean).join(' · ');
-      const rankClass = rank <= 3 ? 'top' : '';
+    function rankingRowHTML(d, rank) {
+      const place = [d.canteenName, d.floorName, d.shopName].filter(Boolean).join(' &#183; ');
       const isFav = favoriteIds.has(String(d.id));
       return `
-        <div class="dish-item">
-          <div class="dish-item-rank ${rankClass}">${rank}</div>
-          <img class="dish-item-image" src="${resolveImg(d.imageUrl)}" alt="${d.name}" onerror="this.src='${getPlaceholderImg()}'">
-          <div class="dish-item-info">
-            <div class="dish-item-name">
-              <span>${d.name}</span>
+        <div class="ranking-row">
+          <span class="rank-col rank-number">${rank}</span>
+          <span class="dish-col">
+            <span class="dish-headline">${d.headline || d.name}</span>
+            <span class="dish-name">${d.name}</span>
+            <span class="dish-place">${place || '校园食堂'}</span>
+            <div class="vote-strip">
+              <span class="vote-label">投票</span>
+              <span class="rating-strip">${[1,2,3,4,5].map(s => `<span class="rating-button" onclick="rateDish('${d.id}',${s})">${s}</span>`).join('')}</span>
             </div>
-            <div class="dish-item-place">${place || '校园食堂'}</div>
-            <div class="dish-item-desc">${d.description || '等待同学补充风味记录。'}</div>
-            <div class="dish-item-meta">
-              <span class="hero-score">★ ${Number(d.avgScore || 0).toFixed(1)}</span>
-              <span>${d.ratingCount || 0} 人评价</span>
-              <span class="category-tag">${d.categoryName || '未分类'}</span>
-            </div>
-            <div class="dish-item-meta" style="margin-top:6px">
-              ${[1,2,3,4,5].map(s => `<span class="star ${s <= Math.round(d.avgScore || 0) ? 'active' : ''}" onclick="rateDish('${d.id}', ${s})">★</span>`).join('')}
-              <span style="font-size:11px;color:#999;margin-left:4px">点击星星评分</span>
-            </div>
-          </div>
-          <span class="favorite-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite('${d.id}')">${isFav ? '&#10084;' : '&#9825;'}</span>
+          </span>
+          <span class="score-col">
+            <span class="score-number">${Number(d.avgScore||0).toFixed(1)}</span>
+            <span class="score-meta">${d.ratingCount||0} 人评价</span>
+          </span>
+          <span class="score-col favorite-col">
+            <span class="favorite-icon ${isFav?'favorited':''}" onclick="toggleFavorite('${d.id}')">${isFav?'&#10084;':'&#9825;'}</span>
+          </span>
         </div>`;
     }
 
-    function filterRanking() {
-      renderRanking(allDishes);
-    }
+    function clearSearch() { $('searchInput').value = ''; filterRanking(); }
+    function filterRanking() { renderRanking(); }
 
-    function renderRankingTags() {
-      const tags = [{ name: '全部', key: '' }, ...allCategories.map(c => ({ name: c.name, key: c.name }))];
-      $('rankingTags').innerHTML = tags.map(t =>
-        `<span class="category-tag ${t.key === currentCategory ? 'active' : ''}" onclick="filterByCategory('${t.key}')">${t.name}</span>`
+    // ===== 分类 =====
+    function renderCategory() {
+      $('catDate').textContent = formatDate();
+      $('categoryGrid').innerHTML = allCategories.map(c =>
+        `<div class="category-item" onclick="showCategoryDishes('${c.name}')">${c.name}</div>`
       ).join('');
     }
-
-    function filterByCategory(cat) {
-      currentCategory = cat;
-      renderRankingTags();
-      renderRanking(allDishes);
-    }
-
-    // ============ 分类页 ============
-    function renderCategoryTags() {
-      $('categoryTags').innerHTML = allCategories.map(c =>
-        `<span class="category-tag" onclick="showCategoryDishes('${c.name}')">${c.name}</span>`
-      ).join('');
-    }
-
     function showCategoryDishes(cat) {
       const filtered = allDishes.filter(d => d.categoryName === cat);
-      if (!filtered.length) {
-        $('categoryList').innerHTML = '<div class="empty">该分类下暂无菜品</div>';
-        return;
-      }
-      $('categoryList').innerHTML = filtered.map((d, i) => dishItemHTML(d, i + 1)).join('');
+      if (!filtered.length) { $('categoryDishes').innerHTML = '<div class="empty">该分类下暂无菜品</div>'; return; }
+      $('categoryDishes').innerHTML = `<div class="ranking-table">${filtered.map((d,i) => rankingRowHTML(d, i+1)).join('')}</div>`;
     }
 
-    // ============ 投稿 ============
+    // ===== 投稿 =====
     async function submitDish() {
       if (!currentUser) { openModal('loginModal'); return; }
       const name = $('submitName').value.trim();
       if (!name) { showToast('请填写菜品名称'); return; }
-
-      const btn = $('submitBtn');
-      btn.disabled = true;
-      btn.textContent = '提交中...';
-
+      const btn = $('submitBtn'); btn.disabled = true; btn.textContent = '提交中...';
       try {
         await fetchJSON('/api/createDish', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({
-            schoolId: 'bistu',
-            name,
-            categoryName: $('submitCategory').value.trim(),
-            description: $('submitDesc').value.trim(),
-            shopName: $('submitShop').value.trim(),
-            floorName: $('submitFloor').value.trim(),
-          })
+          method: 'POST', headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ schoolId: 'bistu', name, categoryName: $('submitCategory').value.trim(), description: $('submitDesc').value.trim(), shopName: $('submitShop').value.trim(), floorName: $('submitFloor').value.trim() })
         });
         showToast('投稿成功，等待审核');
-        $('submitName').value = '';
-        $('submitCategory').value = '';
-        $('submitDesc').value = '';
-        $('submitShop').value = '';
-        $('submitFloor').value = '';
-      } catch (err) {
-        showToast(err.message);
-      } finally {
-        btn.disabled = false;
-        btn.textContent = '提交投稿';
-      }
+        $('submitName').value = ''; $('submitCategory').value = ''; $('submitDesc').value = ''; $('submitShop').value = ''; $('submitFloor').value = '';
+      } catch (err) { showToast(err.message); }
+      finally { btn.disabled = false; btn.textContent = '提交投稿'; }
     }
 
-    // ============ 我的页面 ============
+    // ===== 我的 =====
     function renderProfile() {
+      $('proDate').textContent = formatDate();
       const container = $('profileContent');
       if (!currentUser) {
         container.innerHTML = `
-          <div class="profile-card">
-            <div class="profile-avatar">&#128100;</div>
-            <div class="profile-name">未登录</div>
-            <div class="profile-id">登录后可收藏菜品和投稿</div>
-            <button class="btn" onclick="openModal('loginModal')">登录 / 注册</button>
-          </div>
-          <div class="info-card">
-            <div class="info-title">项目信息</div>
-            <div class="info-item"><span class="info-label">项目名称</span><span class="info-value">明天吃什么日报</span></div>
-            <div class="info-item"><span class="info-label">学校</span><span class="info-value">北京信息科技大学</span></div>
-          </div>`;
+          <div class="profile-card"><div class="profile-avatar">&#128100;</div><div class="profile-name">未登录</div><div class="profile-id">登录后可收藏菜品和投稿</div><button class="profile-btn" onclick="openModal('loginModal')">登录 / 注册</button></div>
+          <div style="padding:8px"><div class="admin-card"><div style="font-size:12px;font-weight:700;margin-bottom:6px">项目信息</div><div style="font-size:11px;color:#555">明天吃什么日报 &#183; 北京信息科技大学</div></div></div>`;
         return;
       }
-
       const favDishes = allDishes.filter(d => favoriteIds.has(String(d.id)));
       let favHtml = '';
       if (favDishes.length) {
-        favHtml = `<div class="section-title">我的收藏 (${favDishes.length})</div><div class="dish-list">${favDishes.map((d, i) => dishItemHTML(d, i + 1)).join('')}</div>`;
-      } else {
-        favHtml = `<div class="section-title">我的收藏</div><div class="empty">暂无收藏菜品</div>`;
-      }
-
+        favHtml = `<div style="margin:8px"><div class="ranking-section-title" style="font-size:14px">我的收藏 (${favDishes.length})</div><div class="ranking-table">${favDishes.map((d,i) => rankingRowHTML(d, i+1)).join('')}</div></div>`;
+      } else { favHtml = '<div style="margin:8px"><div class="empty">暂无收藏菜品</div></div>'; }
       container.innerHTML = `
-        <div class="profile-card">
-          <div class="profile-avatar">&#128100;</div>
-          <div class="profile-name">${currentUser.nickname}</div>
-          <div class="profile-id">@${currentUser.username}</div>
-        </div>
+        <div class="profile-card"><div class="profile-avatar">&#128100;</div><div class="profile-name">${currentUser.nickname}</div><div class="profile-id">@${currentUser.username}</div></div>
         ${favHtml}
-        <div style="padding:0 16px">
-          <button class="btn secondary" onclick="logout()">退出登录</button>
-        </div>
-        <div class="info-card" style="margin:16px">
-          <div class="info-title">项目信息</div>
-          <div class="info-item"><span class="info-label">项目名称</span><span class="info-value">明天吃什么日报</span></div>
-          <div class="info-item"><span class="info-label">学校</span><span class="info-value">北京信息科技大学</span></div>
-          <div class="info-item"><span class="info-label">版本</span><span class="info-value">Web 完整版</span></div>
-        </div>`;
+        <div style="padding:0 8px"><button class="profile-btn" onclick="logout()" style="background:#333">退出登录</button></div>`;
     }
 
-    // ============ 管理员 ============
-    $('homeMasthead').addEventListener('click', () => {
+    // ===== 管理员 =====
+    $('homeMastheadTitle').parentElement.addEventListener('click', () => {
       if (adminTapTimer) clearTimeout(adminTapTimer);
       adminTapCount++;
-      if (adminTapCount >= 6) {
-        adminTapCount = 0;
-        openModal('adminModal');
-        return;
-      }
+      if (adminTapCount >= 6) { adminTapCount = 0; openModal('adminModal'); return; }
       adminTapTimer = setTimeout(() => { adminTapCount = 0; }, 1400);
     });
-
     async function doAdminLogin() {
       const password = $('adminPassword').value;
       if (!password) { showToast('请输入密码'); return; }
       try {
-        const data = await fetchJSON('/api/adminLogin', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ password })
-        });
-        adminToken = data.token;
-        localStorage.setItem('adminToken', adminToken);
-        closeModal('adminModal');
-        showToast('管理员登录成功');
-        switchTab('admin');
-      } catch (err) {
-        showToast(err.message);
-      }
+        const data = await fetchJSON('/api/adminLogin', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ password }) });
+        adminToken = data.token; localStorage.setItem('adminToken', adminToken); closeModal('adminModal'); showToast('管理员登录成功'); switchTab('admin');
+      } catch (err) { showToast(err.message); }
     }
-
     async function renderAdmin() {
       if (!adminToken) { switchTab('home'); return; }
       try {
-        const dishes = await fetchJSON('/api/dishes?schoolId=bistu&includeOffline=true', {
-          headers: { 'x-user-token': adminToken }
-        });
+        const dishes = await fetchJSON('/api/dishes?schoolId=bistu&includeOffline=true', { headers: { 'x-user-token': adminToken } });
         const pending = dishes.filter(d => d.status === 'PENDING');
-        if (!pending.length) {
-          $('adminDishes').innerHTML = '<div class="empty">暂无待审核菜品</div>';
-        } else {
-          $('adminDishes').innerHTML = pending.map(d => `
-            <div class="admin-dish">
-              <div>
-                <div class="admin-dish-name">${d.name}</div>
-                <div style="font-size:11px;color:#888">${d.categoryName || '未分类'} · ${d.shopName || '未知窗口'}</div>
-              </div>
-              <div class="admin-actions">
-                <button class="btn-approve" onclick="updateDishStatus('${d.id}', 'ACTIVE')">通过</button>
-                <button class="btn-reject" onclick="updateDishStatus('${d.id}', 'OFFLINE')">拒绝</button>
-              </div>
-            </div>
-          `).join('');
-        }
-      } catch (err) {
-        $('adminDishes').innerHTML = '<div class="error">加载失败</div>';
-      }
+        $('adminPanel').innerHTML = `
+          <div class="admin-card"><div style="font-size:12px;font-weight:900;margin-bottom:6px;border-bottom:1px solid #000;padding-bottom:4px">待审核菜品</div>${pending.length ? pending.map(d => `
+            <div class="admin-dish"><div><div style="font-weight:700">${d.name}</div><div style="font-size:10px;color:#888">${d.categoryName||'未分类'} &#183; ${d.shopName||'未知窗口'}</div></div><div><button class="btn-approve" onclick="updateDishStatus('${d.id}','ACTIVE')">通过</button> <button class="btn-reject" onclick="updateDishStatus('${d.id}','OFFLINE')">拒绝</button></div></div>
+          `).join('') : '<div class="empty">暂无待审核</div>'}</div>
+          <div class="admin-card"><div style="font-size:12px;font-weight:900;margin-bottom:6px;border-bottom:1px solid #000;padding-bottom:4px">设置公告</div><textarea class="form-textarea" id="adminAnnouncement" placeholder="输入公告内容..."></textarea><button class="btn-submit" style="margin-top:6px" onclick="setAnnouncement()">保存公告</button></div>
+          <div class="admin-card"><div style="font-size:12px;font-weight:900;margin-bottom:6px;border-bottom:1px solid #000;padding-bottom:4px">创建分类</div><input type="text" class="form-input" id="adminCategoryName" placeholder="分类名称"><button class="btn-submit" style="margin-top:6px" onclick="createCategory()">创建分类</button></div>`;
+      } catch (err) { $('adminPanel').innerHTML = '<div class="error">加载失败</div>'; }
     }
-
     async function updateDishStatus(dishId, status) {
-      try {
-        await fetchJSON('/api/updateDish', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ token: adminToken, dishId, patch: { status } })
-        });
-        showToast(status === 'ACTIVE' ? '已通过' : '已拒绝');
-        renderAdmin();
-        reloadDishes();
-      } catch (err) {
-        showToast(err.message);
-      }
+      try { await fetchJSON('/api/updateDish', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token: adminToken, dishId, patch: { status } }) }); showToast(status==='ACTIVE'?'已通过':'已拒绝'); renderAdmin(); reloadDishes(); }
+      catch (err) { showToast(err.message); }
     }
-
     async function setAnnouncement() {
-      const content = $('adminAnnouncement').value.trim();
-      if (!content) { showToast('请输入公告内容'); return; }
-      try {
-        await fetchJSON('/api/setAnnouncement', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ token: adminToken, schoolId: 'bistu', content })
-        });
-        showToast('公告已更新');
-        $('adminAnnouncement').value = '';
-      } catch (err) {
-        showToast(err.message);
-      }
+      const content = $('adminAnnouncement').value.trim(); if (!content) { showToast('请输入公告内容'); return; }
+      try { await fetchJSON('/api/setAnnouncement', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token: adminToken, schoolId: 'bistu', content }) }); showToast('公告已更新'); $('adminAnnouncement').value = ''; }
+      catch (err) { showToast(err.message); }
     }
-
     async function createCategory() {
-      const name = $('adminCategoryName').value.trim();
-      if (!name) { showToast('请输入分类名称'); return; }
-      try {
-        await fetchJSON('/api/createCategory', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ token: adminToken, schoolId: 'bistu', name })
-        });
-        showToast('分类创建成功');
-        $('adminCategoryName').value = '';
-        await init();
-      } catch (err) {
-        showToast(err.message);
-      }
+      const name = $('adminCategoryName').value.trim(); if (!name) { showToast('请输入分类名称'); return; }
+      try { await fetchJSON('/api/createCategory', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token: adminToken, schoolId: 'bistu', name }) }); showToast('分类创建成功'); $('adminCategoryName').value = ''; await init(); }
+      catch (err) { showToast(err.message); }
     }
 
-    // ============ 初始化 ============
+    function resolveImg(url) {
+      if (!url) return '';
+      if (url.startsWith('data:')) return url;
+      return url;
+    }
+
+    // ===== 初始化 =====
     async function init() {
       loadUser();
-      $('homeDate').textContent = formatDate();
-
       try {
         const [dishes, announcement, categories, canteens] = await Promise.all([
           fetchJSON('/api/rankings?schoolId=bistu&limit=20').catch(() => []),
@@ -1007,23 +1096,12 @@
           fetchJSON('/api/categories?schoolId=bistu').catch(() => []),
           fetchJSON('/api/canteenData?schoolId=bistu').catch(() => []),
         ]);
-        allDishes = dishes || [];
-        allCategories = categories || [];
-        canteenData = canteens || [];
-
-        $('homeAnnouncement').textContent = announcement || '暂无公告，欢迎投稿';
-        renderHome();
-        renderRankingTags();
-        renderCategoryTags();
-        if (currentUser) {
-          await loadFavorites();
-        }
-        renderProfile();
-      } catch (err) {
-        $('homeAnnouncement').textContent = '加载失败，请刷新重试';
-      }
+        allDishes = dishes || []; allCategories = categories || []; canteenData = canteens || [];
+        renderHome(); renderRanking(); renderCategory(); renderProfile();
+        if (currentUser) await loadFavorites();
+        renderHome(); renderRanking(); renderProfile();
+      } catch (err) {}
     }
-
     init();
   </script>
 </body>
