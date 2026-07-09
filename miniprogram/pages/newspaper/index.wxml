@@ -260,6 +260,7 @@
               <text class="rank-col">名次</text>
               <text class="dish-col">菜品头条与投票</text>
               <text class="score-col">得分</text>
+              <text class="score-col favorite-col-header">收藏</text>
             </view>
             <view class="ranking-row" wx:for="{{filteredRankingRows}}" wx:key="id">
               <text class="rank-col rank-number">{{index + 1}}</text>
@@ -285,6 +286,42 @@
               <view class="score-col score-info">
                 <text class="score-number">{{item.scoreText}}</text>
                 <text class="score-meta">{{item.ratingText}}</text>
+              </view>
+              <view class="score-col favorite-col">
+                <text
+                  class="favorite-icon {{favoriteMap[item.id] ? 'favorited' : ''}}"
+                  data-dish-id="{{item.id}}"
+                  bindtap="toggleFavorite"
+                >{{favoriteMap[item.id] ? '❤️' : '🤍'}}</text>
+              </view>
+            </view>
+
+            <!-- 我的收藏 -->
+            <view wx:if="{{favoriteDishes.length > 0}}" class="favorite-section">
+              <view class="section-title">我的收藏</view>
+              <view class="double-rule"></view>
+              <view class="ranking-table newspaper-table">
+                <view class="ranking-row top-row">
+                  <text class="dish-col">菜品</text>
+                  <text class="score-col">窗口</text>
+                  <text class="score-col favorite-col-header">操作</text>
+                </view>
+                <view class="ranking-row" wx:for="{{favoriteDishes}}" wx:key="id">
+                  <view class="dish-col dish-info">
+                    <text class="dish-headline">{{item.headline}}</text>
+                    <text class="dish-name">{{item.name}}</text>
+                  </view>
+                  <text class="score-col score-info">
+                    <text class="score-number">{{item.shopText}}</text>
+                  </text>
+                  <view class="score-col favorite-col">
+                    <text
+                      class="favorite-icon favorited"
+                      data-dish-id="{{item.id}}"
+                      bindtap="toggleFavorite"
+                    >❤️</text>
+                  </view>
+                </view>
               </view>
             </view>
             <view wx:if="{{isSearching && filteredRankingRows.length === 0}}" class="no-result">
