@@ -46,7 +46,45 @@
 
 ---
 
-eat-what-today/ ├── miniprogram/ # 微信小程序端 │ ├── pages/ # 页面 │ │ ├── newspaper/ # 首页+榜单（01版/02版） │ │ │ ├── index.ts │ │ │ ├── index.wxml │ │ │ ├── index.scss │ │ │ └── index.json │ │ ├── favorites/ # 我的收藏 │ │ │ ├── index.ts │ │ │ ├── index.wxml │ │ │ ├── index.scss │ │ │ └── index.json │ │ ├── detail/ # 菜品详情 │ │ ├── submit/ # 菜品投稿 │ │ └── auth/ # 登录注册 │ ├── utils/ # 工具函数 │ │ └── api.ts # API封装（支持云开发/REST切换） │ ├── app.ts # 小程序全局逻辑 │ ├── app.json # 小程序全局配置 │ └── app.scss # 小程序全局样式 ├── server/ # REST API后端 │ ├── index.js # Express主入口 │ ├── index.html # Web端页面 │ ├── package.json # 后端依赖 │ └── public/ │ └── images/ # 菜品图片资源（dish1.jpg ~ dish12.jpg） ├── cloudfunctions/ # 微信云函数 │ └── dish-api/ # 菜品相关云函数 │ └── index.js ├── .github/ │ └── workflows/ # GitHub Actions CI │ └── ci.yml ├── README.md # 项目说明 └── LICENSE # 开源协议
+## 项目结构
+
+```
+eat-what-today/
+├── miniprogram/              # 微信小程序端
+│   ├── pages/                # 页面
+│   │   ├── newspaper/        # 首页+榜单（01版/02版）
+│   │   │   ├── index.ts
+│   │   │   ├── index.wxml
+│   │   │   ├── index.scss
+│   │   │   └── index.json
+│   │   ├── favorites/        # 我的收藏
+│   │   │   ├── index.ts
+│   │   │   ├── index.wxml
+│   │   │   ├── index.scss
+│   │   │   └── index.json
+│   │   ├── detail/           # 菜品详情
+│   │   ├── submit/           # 菜品投稿
+│   │   └── auth/             # 登录注册
+│   ├── utils/                # 工具函数
+│   │   └── api.ts            # API封装（支持云开发/REST切换）
+│   ├── app.ts                # 小程序全局逻辑
+│   ├── app.json              # 小程序全局配置
+│   └── app.scss              # 小程序全局样式
+├── server/                   # REST API后端
+│   ├── index.js              # Express主入口
+│   ├── index.html            # Web端页面
+│   ├── package.json          # 后端依赖
+│   └── public/
+│       └── images/           # 菜品图片资源（dish1.jpg ~ dish12.jpg）
+├── cloudfunctions/           # 微信云函数
+│   └── dish-api/             # 菜品相关云函数
+│       └── index.js
+├── .github/
+│   └── workflows/            # GitHub Actions CI
+│       └── ci.yml
+├── README.md                 # 项目说明
+└── LICENSE                   # 开源协议
+```
 
 ---
 
