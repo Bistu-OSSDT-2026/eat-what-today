@@ -1,16 +1,19 @@
 import {
   adminLogin,
+  adminLogout,
   announcement,
   categories,
   createCategory,
   dishes,
+  clearAdminSession,
+  getStoredAdminToken,
   setAnnouncement,
+  storeAdminSession,
   updateDish,
   type CategoryView,
   type DishView,
 } from '../../utils/api'
 
-const ADMIN_TOKEN_KEY = 'dishAdminToken'
 const SCHOOL_ID = 'bistu'
 const SCHOOL_NAME = '北京信息科技大学'
 const DISH_PLACEHOLDER = '/images/dish-placeholder.svg'
@@ -71,6 +74,7 @@ function countByStatus(rows: DisplayDish[], status: string) {
 
 Page({
   data: {
+    topInset: 10,
     schoolId: SCHOOL_ID,
     schoolName: SCHOOL_NAME,
     adminToken: '',
@@ -108,9 +112,22 @@ Page({
   },
 
   onLoad() {
-    const adminToken = (wx.getStorageSync(ADMIN_TOKEN_KEY) as string) || ''
-    this.setData({ adminToken })
+    const info = wx.getWindowInfo()
+    const adminToken = getStoredAdminToken()
+    this.setData({
+      topInset: (info.statusBarHeight || 0) + 12,
+      adminToken,
+    })
     if (adminToken) this.loadAdminData()
+  },
+
+  goBack() {
+    const pages = getCurrentPages()
+    if (pages.length > 1) {
+      wx.navigateBack({ delta: 1 })
+    } else {
+      wx.redirectTo({ url: '/pages/newspaper/index' })
+    }
   },
 
   onPullDownRefresh() {
@@ -132,7 +149,7 @@ Page({
     wx.showLoading({ title: '登录中' })
     try {
       const session = await adminLogin(password)
-      wx.setStorageSync(ADMIN_TOKEN_KEY, session.token)
+      storeAdminSession(session)
       this.setData({ adminToken: session.token, password: '' })
       wx.showToast({ title: '已登录', icon: 'success' })
       await this.loadAdminData()
@@ -144,9 +161,25 @@ Page({
     }
   },
 
-  logoutAdmin() {
-    wx.removeStorageSync(ADMIN_TOKEN_KEY)
-    this.setData({ adminToken: '', dishes: [], visibleDishes: [] })
+  async logoutAdmin() {
+    const token = this.data.adminToken
+    try {
+      if (token) await adminLogout(token)
+    } catch (error) {
+      console.warn('云端管理员会话注销失败:', error)
+    } finally {
+      clearAdminSession()
+      this.setData({ adminToken: '', dishes: [], visibleDishes: [] })
+    }
+  },
+
+  handleAdminError(error: unknown, fallback: string) {
+    const message = error instanceof Error ? error.message : fallback
+    if (['请先登录后台', '后台登录已过期', '管理员身份不匹配'].includes(message)) {
+      clearAdminSession()
+      this.setData({ adminToken: '', dishes: [], visibleDishes: [] })
+    }
+    wx.showToast({ title: message, icon: 'none' })
   },
 
   async loadAdminData() {
@@ -156,7 +189,7 @@ Page({
       const [announcementText, categoryRows, dishRows] = await Promise.all([
         announcement(this.data.schoolId),
         categories(this.data.schoolId),
-        dishes(this.data.schoolId, true),
+        dishes(this.data.schoolId, true, this.data.adminToken),
       ])
       const normalizedDishes = dishRows.map(normalizeDish)
       this.setData({
@@ -172,7 +205,7 @@ Page({
       })
       this.applyStatusFilter()
     } catch (error) {
-      wx.showToast({ title: error instanceof Error ? error.message : '加载失败', icon: 'none' })
+      this.handleAdminError(error, '加载失败')
     } finally {
       this.setData({ loading: false })
     }
@@ -201,7 +234,7 @@ Page({
       await setAnnouncement(this.data.adminToken, this.data.schoolId, this.data.announcement.trim())
       wx.showToast({ title: '公告已保存', icon: 'success' })
     } catch (error) {
-      wx.showToast({ title: error instanceof Error ? error.message : '保存失败', icon: 'none' })
+      this.handleAdminError(error, '保存失败')
     } finally {
       this.setData({ saving: false })
     }
@@ -226,7 +259,7 @@ Page({
       })
       wx.showToast({ title: '分类已添加', icon: 'success' })
     } catch (error) {
-      wx.showToast({ title: error instanceof Error ? error.message : '添加失败', icon: 'none' })
+      this.handleAdminError(error, '添加失败')
     }
   },
 
@@ -240,7 +273,7 @@ Page({
       wx.showToast({ title: status === 'ACTIVE' ? '已上架' : '已下架', icon: 'success' })
       await this.loadAdminData()
     } catch (error) {
-      wx.showToast({ title: error instanceof Error ? error.message : '操作失败', icon: 'none' })
+      this.handleAdminError(error, '操作失败')
     }
   },
 
@@ -293,7 +326,7 @@ Page({
       this.closeEditSheet()
       await this.loadAdminData()
     } catch (error) {
-      wx.showToast({ title: error instanceof Error ? error.message : '保存失败', icon: 'none' })
+      this.handleAdminError(error, '保存失败')
     } finally {
       this.setData({ saving: false })
     }

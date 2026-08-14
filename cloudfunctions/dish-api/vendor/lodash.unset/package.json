@@ -1,0 +1,8 @@
+{
+  "name": "lodash.unset",
+  "version": "4.5.3",
+  "main": "index.js",
+  "dependencies": {
+    "lodash": "4.18.1"
+  }
+}

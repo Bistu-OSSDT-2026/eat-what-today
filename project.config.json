@@ -1,9 +1,10 @@
 {
-  "description": "项目配置文件",
+  "description": "今天吃什么微信小程序",
   "miniprogramRoot": "miniprogram/",
   "cloudfunctionRoot": "cloudfunctions/",
   "compileType": "miniprogram",
   "setting": {
+    "urlCheck": true,
     "useCompilerPlugins": [
       "typescript",
       "sass"
@@ -14,15 +15,18 @@
       "outputPath": ""
     },
     "coverView": false,
-    "postcss": false,
-    "minified": false,
-    "enhance": false,
+    "postcss": true,
+    "minified": true,
+    "enhance": true,
+    "checkInvalidKey": true,
+    "checkSiteMap": true,
     "showShadowRootInWxmlPanel": false,
     "packNpmRelationList": [],
+    "ignoreDevUnusedFiles": true,
     "ignoreUploadUnusedFiles": true,
     "compileHotReLoad": false,
     "skylineRenderEnable": true,
-    "es6": false,
+    "es6": true,
     "compileWorklet": false,
     "uglifyFileName": false,
     "uploadWithSourceMap": true,
@@ -43,9 +47,15 @@
     "tabIndent": "insertSpaces",
     "tabSize": 2
   },
-  "libVersion": "2.32.3",
+  "projectname": "eat-what-today",
+  "libVersion": "3.15.3",
   "packOptions": {
-    "ignore": [],
+    "ignore": [
+      {
+        "type": "suffix",
+        "value": ".DS_Store"
+      }
+    ],
     "include": []
   },
   "appid": "wx79400b94f54fbf16"

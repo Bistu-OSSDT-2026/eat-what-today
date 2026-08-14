@@ -1,10 +1,17 @@
-const TOKEN_STORAGE_KEY = 'dishUserToken'
 const PROFILE_STORAGE_KEY = 'dishUserProfile'
+const LEGACY_USER_TOKEN_STORAGE_KEY = 'dishUserToken'
+const ADMIN_SESSION_STORAGE_KEY = 'dishAdminSession'
+const LEGACY_ADMIN_TOKEN_STORAGE_KEY = 'dishAdminToken'
 const DEFAULT_CLOUD_FUNCTION_NAME = 'dish-api'
 
 export interface UserProfile {
   nickname: string
   avatarUrl: string
+}
+
+export interface AdminSession {
+  token: string
+  expiresAt: string
 }
 
 export interface DishView {
@@ -99,7 +106,11 @@ function callCloud<T>(action: string, data: WechatMiniprogram.IAnyObject = {}) {
   })
 }
 
-function uploadImage(imagePath: string) {
+function isRemoteImage(imagePath: string) {
+  return imagePath.startsWith('cloud://') || imagePath.startsWith('http://') || imagePath.startsWith('https://')
+}
+
+function uploadImage(imagePath: string, folder: string) {
   return new Promise<string>((resolve, reject) => {
     if (!wx.cloud) {
       reject(new Error('当前微信版本不支持云开发'))
@@ -108,7 +119,7 @@ function uploadImage(imagePath: string) {
 
     const extMatch = imagePath.match(/\.([a-zA-Z0-9]+)$/)
     const ext = extMatch ? extMatch[1] : 'jpg'
-    const cloudPath = `dish-images/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+    const cloudPath = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
     wx.cloud.uploadFile({
       cloudPath,
       filePath: imagePath,
@@ -122,11 +133,8 @@ function uploadImage(imagePath: string) {
   })
 }
 
-export function getStoredToken(): string {
-  return (wx.getStorageSync(TOKEN_STORAGE_KEY) as string) || ''
-}
-
 export function getStoredProfile(): UserProfile | null {
+  wx.removeStorageSync(LEGACY_USER_TOKEN_STORAGE_KEY)
   const raw = wx.getStorageSync(PROFILE_STORAGE_KEY)
   if (!raw || typeof raw !== 'object') return null
   const profile = raw as Partial<UserProfile>
@@ -135,19 +143,45 @@ export function getStoredProfile(): UserProfile | null {
 }
 
 export function isRegistered(): boolean {
-  return Boolean(getStoredToken() && getStoredProfile())
+  return Boolean(getStoredProfile())
+}
+
+export function getStoredAdminToken(): string {
+  const raw = wx.getStorageSync(ADMIN_SESSION_STORAGE_KEY)
+  if (!raw || typeof raw !== 'object') return ''
+  const session = raw as Partial<AdminSession>
+  const expiresAt = Number(session.expiresAt || 0)
+  if (!session.token || !expiresAt || expiresAt <= Date.now()) {
+    wx.removeStorageSync(ADMIN_SESSION_STORAGE_KEY)
+    return ''
+  }
+  return session.token
+}
+
+export function storeAdminSession(session: AdminSession) {
+  wx.setStorageSync(ADMIN_SESSION_STORAGE_KEY, session)
+  wx.removeStorageSync(LEGACY_ADMIN_TOKEN_STORAGE_KEY)
+}
+
+export function clearAdminSession() {
+  wx.removeStorageSync(ADMIN_SESSION_STORAGE_KEY)
+  wx.removeStorageSync(LEGACY_ADMIN_TOKEN_STORAGE_KEY)
 }
 
 export function logout() {
-  wx.removeStorageSync(TOKEN_STORAGE_KEY)
   wx.removeStorageSync(PROFILE_STORAGE_KEY)
 }
 
-export async function registerOrLogin(profile: UserProfile): Promise<string> {
-  const data = await callCloud<{ token: string }>('registerOrLogin', profile as unknown as WechatMiniprogram.IAnyObject)
-  wx.setStorageSync(TOKEN_STORAGE_KEY, data.token)
-  wx.setStorageSync(PROFILE_STORAGE_KEY, profile)
-  return data.token
+export async function registerOrLogin(profile: UserProfile): Promise<void> {
+  const avatarUrl = profile.avatarUrl && !isRemoteImage(profile.avatarUrl)
+    ? await uploadImage(profile.avatarUrl, 'dish-avatars')
+    : profile.avatarUrl
+  const storedProfile = { ...profile, avatarUrl }
+  const data = await callCloud<{ profile: UserProfile }>(
+    'registerOrLogin',
+    storedProfile as unknown as WechatMiniprogram.IAnyObject,
+  )
+  wx.setStorageSync(PROFILE_STORAGE_KEY, data.profile || storedProfile)
 }
 
 export function rankings(schoolId = 'bistu', limit = 20) {
@@ -167,13 +201,17 @@ export function canteenData(schoolId = 'bistu') {
 }
 
 export function adminLogin(password: string) {
-  return callCloud<{ token: string; expiresAt: string; role: string; schoolId?: string; schoolName?: string }>('adminLogin', {
+  return callCloud<AdminSession & { role: string; schoolId?: string; schoolName?: string }>('adminLogin', {
     password,
   })
 }
 
-export function dishes(schoolId = 'bistu', includeOffline = false) {
-  return callCloud<DishView[]>('dishes', { schoolId, includeOffline, limit: 200 })
+export function adminLogout(token: string) {
+  return callCloud<boolean>('adminLogout', { token })
+}
+
+export function dishes(schoolId = 'bistu', includeOffline = false, token = '') {
+  return callCloud<DishView[]>('dishes', { schoolId, includeOffline, token, limit: 200 })
 }
 
 export function updateDish(token: string, dishId: string, patch: Partial<DishView>) {
@@ -192,14 +230,13 @@ export function createCategory(token: string, schoolId: string, name: string) {
   return callCloud<CategoryView>('createCategory', { token, schoolId, name })
 }
 
-export function rateDish(token: string, dishId: string, score: number) {
-  return callCloud<DishView>('rateDish', { token, dishId, score })
+export function rateDish(dishId: string, score: number) {
+  return callCloud<DishView>('rateDish', { dishId, score })
 }
 
-export async function uploadDish(token: string, payload: UploadDishPayload, imagePath: string) {
-  const imageUrl = imagePath ? await uploadImage(imagePath) : ''
+export async function uploadDish(payload: UploadDishPayload, imagePath: string) {
+  const imageUrl = imagePath ? await uploadImage(imagePath, 'dish-images') : ''
   return callCloud<DishView>('createDish', {
-    token,
     ...cleanPayload({
       schoolId: payload.schoolId,
       name: payload.name,

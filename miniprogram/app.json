@@ -7,7 +7,8 @@
   "window": {
     "navigationBarTextStyle": "black",
     "navigationStyle": "custom",
-    "backgroundColor": "#eee9dd",
+    "navigationBarTitleText": "今天吃什么",
+    "backgroundColor": "#f6f5f1",
     "backgroundTextStyle": "dark"
   },
   "style": "v2",
@@ -23,5 +24,6 @@
   },
   "componentFramework": "glass-easel",
   "sitemapLocation": "sitemap.json",
-  "lazyCodeLoading": "requiredComponents"
+  "lazyCodeLoading": "requiredComponents",
+  "__usePrivacyCheck__": true
 }

@@ -3,6 +3,12 @@
   "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
-    "wx-server-sdk": "latest"
+    "lodash": "4.18.1",
+    "wx-server-sdk": "4.0.2"
+  },
+  "overrides": {
+    "axios": "1.19.0",
+    "lodash.set": "file:vendor/lodash.set",
+    "lodash.unset": "file:vendor/lodash.unset"
   }
 }

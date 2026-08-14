@@ -9,6 +9,5 @@ App<IAppOption>({
         traceUser: true,
       })
     }
-    wx.setStorageSync('lastOpenAt', Date.now())
   },
 })

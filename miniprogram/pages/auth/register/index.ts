@@ -7,44 +7,20 @@ interface RegisterForm {
 
 const DEFAULT_NICKNAME = '微信读者'
 
-function formatTwo(value: number) {
-  return value < 10 ? `0${value}` : `${value}`
-}
-
 function trimText(value = '') {
   return value.trim()
 }
 
-function pickProfile(form: RegisterForm, wxUserInfo?: WechatMiniprogram.UserInfo): UserProfile {
-  const nickname = trimText((wxUserInfo && wxUserInfo.nickName) || form.nickname) || DEFAULT_NICKNAME
-  const avatarUrl = (wxUserInfo && wxUserInfo.avatarUrl) || form.avatarUrl || ''
+function pickProfile(form: RegisterForm): UserProfile {
+  const nickname = trimText(form.nickname) || DEFAULT_NICKNAME
+  const avatarUrl = form.avatarUrl || ''
   return { nickname, avatarUrl }
-}
-
-function getWxUserProfile() {
-  return new Promise<WechatMiniprogram.UserInfo | undefined>((resolve) => {
-    if (!wx.canIUse('getUserProfile')) {
-      resolve(undefined)
-      return
-    }
-
-    wx.getUserProfile({
-      desc: '用于展示投稿和评分身份',
-      success(res) {
-        resolve(res.userInfo)
-      },
-      fail() {
-        resolve(undefined)
-      },
-    })
-  })
 }
 
 Page({
   data: {
     statusBarHeight: 0,
     readerTop: 10,
-    editionDate: '',
     registered: false,
     statusLabel: '未登录',
     identityLabel: '设置后可投稿和评分',
@@ -57,11 +33,9 @@ Page({
 
   onLoad() {
     const info = wx.getWindowInfo()
-    const now = new Date()
     this.setData({
       statusBarHeight: info.statusBarHeight || 0,
-      readerTop: (info.statusBarHeight || 0) + 10,
-      editionDate: `${now.getFullYear()}.${formatTwo(now.getMonth() + 1)}.${formatTwo(now.getDate())}`,
+      readerTop: (info.statusBarHeight || 0) + 12,
     })
     this.refreshProfileState()
   },
@@ -97,8 +71,7 @@ Page({
     this.setData({ submitting: true })
     wx.showLoading({ title: '保存中', mask: true })
     try {
-      const wxUserInfo = await getWxUserProfile()
-      const profile = pickProfile(form, wxUserInfo)
+      const profile = pickProfile(form)
       this.setData({ form: profile })
       await registerOrLogin(profile)
       this.refreshProfileState()
