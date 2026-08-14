@@ -40,7 +40,11 @@ button {
   min-width: 0;
   margin: 0;
   padding: 0;
-  line-height: normal;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
+  text-align: center;
 }
 
 button::after {
