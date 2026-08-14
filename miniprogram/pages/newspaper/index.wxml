@@ -16,43 +16,77 @@
   </view>
 
   <view class="content">
-    <view class="announcement" wx:if="{{announcementText}}">
-      <text class="announcement-label">今日公告</text>
-      <text class="announcement-text">{{announcementText}}</text>
+    <view class="notice" wx:if="{{announcementText}}">
+      <text class="notice-tag">公告</text>
+      <text class="notice-text">{{announcementText}}</text>
     </view>
 
-    <view class="decision-card {{randomRolling ? 'is-rolling' : ''}}">
+    <view class="decision-card {{randomRolling || randomSettleDirection ? 'is-rolling' : ''}}">
+      <view class="decision-tabs">
+        <view
+          class="decision-tab {{decisionMode === 'food' ? 'is-active' : ''}}"
+          data-mode="food"
+          bindtap="switchDecisionMode"
+        >吃什么</view>
+        <view
+          class="decision-tab {{decisionMode === 'drink' ? 'is-active' : ''}}"
+          data-mode="drink"
+          bindtap="switchDecisionMode"
+        >喝什么</view>
+      </view>
+
       <view class="decision-copy">
         <text class="decision-kicker">现在就决定</text>
-        <text class="decision-title">{{randomPick.shop}}</text>
-        <text class="decision-place">{{randomPick.place}}</text>
+        <view class="decision-slot {{randomSettleDirection}}" aria-live="polite">
+          <view
+            class="decision-reel {{randomRolling ? 'is-rolling' : ''}} {{randomSettleDirection ? 'is-settling' : ''}}"
+            style="transform: translateY({{randomReelOffset}}rpx);"
+          >
+            <view class="decision-result" wx:for="{{randomReel}}" wx:key="reelId">
+              <text class="decision-title">{{item.shop}}</text>
+              <text class="decision-place">{{item.place}}</text>
+            </view>
+          </view>
+        </view>
       </view>
-      <button class="decision-button" bindtap="rollRandomPick">换一个</button>
+      <button
+        class="decision-button {{randomRolling || randomSettleDirection ? 'is-disabled' : ''}}"
+        aria-disabled="{{randomRolling || randomSettleDirection}}"
+        bindtap="rollRandomPick"
+      >
+        {{randomRolling || randomSettleDirection ? '转动中' : '换一个'}}
+      </button>
     </view>
 
     <view class="quick-actions">
-      <button class="action-button is-primary" bindtap="openSubmitSheet">推荐菜品</button>
+      <button class="action-button is-recommend" bindtap="openSubmitSheet">推荐菜品</button>
       <button class="action-button" loading="{{loading}}" disabled="{{loading}}" bindtap="refreshData">刷新榜单</button>
     </view>
 
-    <view class="section">
+    <view class="section ranking-section">
       <view class="section-heading">
         <view>
-          <text class="section-title">今日首选</text>
-          <text class="section-subtitle">榜单第一名</text>
+          <text class="section-title">风味榜</text>
+          <text class="section-subtitle">来自同学的真实评分</text>
         </view>
-        <text class="section-score">{{leadDish.scoreText}} 分</text>
+        <text class="section-count">{{rankingRows.length}} 道</text>
       </view>
 
       <view class="feature">
-        <image class="feature-image" src="{{leadDish.imageUrl}}" mode="aspectFill" binderror="onLeadDishImageError"></image>
+        <image class="feature-image" src="{{leadDish.imageUrl}}" mode="aspectFit" binderror="onLeadDishImageError"></image>
         <view class="feature-copy">
-          <text class="feature-category">{{leadDish.categoryName}}</text>
+          <view class="feature-head">
+            <text class="feature-badge">TOP 1</text>
+            <text class="feature-category">{{leadDish.categoryName}}</text>
+          </view>
           <text class="feature-title">{{leadDish.name}}</text>
           <text class="feature-description">{{leadDish.description}}</text>
           <text class="feature-place">{{leadDish.placeText}}</text>
           <view class="feature-meta">
-            <text>{{leadDish.ratingText}}</text>
+            <view class="feature-score">
+              <text class="feature-score-value">{{leadDish.scoreText}}</text>
+              <text class="feature-score-label">{{leadDish.ratingText}}</text>
+            </view>
             <view class="rating-strip" wx:if="{{leadDish.canRate}}">
               <button
                 wx:for="{{ratingScoreOptions}}"
@@ -68,44 +102,36 @@
           </view>
         </view>
       </view>
-    </view>
-
-    <view class="section ranking-section">
-      <view class="section-heading">
-        <view>
-          <text class="section-title">风味榜</text>
-          <text class="section-subtitle">来自同学的真实评分</text>
-        </view>
-        <text class="section-count">{{rankingRows.length}} 道</text>
-      </view>
 
       <view class="ranking-list">
-        <view class="ranking-row" wx:for="{{rankingRows}}" wx:key="id">
-          <text class="rank-number">{{index + 1}}</text>
-          <view class="rank-copy">
-            <view class="rank-title-row">
-              <text class="rank-title">{{item.name}}</text>
-              <text class="rank-category">{{item.categoryName}}</text>
+        <block wx:for="{{rankingRows}}" wx:key="id">
+          <view class="ranking-row" wx:if="{{index > 0}}">
+            <text class="rank-number">{{index + 1}}</text>
+            <view class="rank-copy">
+              <view class="rank-title-row">
+                <text class="rank-title">{{item.name}}</text>
+                <text class="rank-category">{{item.categoryName}}</text>
+              </view>
+              <text class="rank-place">{{item.placeText}}</text>
+              <view class="rating-strip compact" wx:if="{{item.canRate}}">
+                <button
+                  wx:for="{{ratingScoreOptions}}"
+                  wx:for-item="score"
+                  wx:key="*this"
+                  class="rating-button"
+                  data-dish-id="{{item.id}}"
+                  data-score="{{score}}"
+                  bindtap="onRateTap"
+                  aria-label="给 {{item.name}} 打 {{score}} 分"
+                >{{score}}</button>
+              </view>
             </view>
-            <text class="rank-place">{{item.placeText}}</text>
-            <view class="rating-strip compact" wx:if="{{item.canRate}}">
-              <button
-                wx:for="{{ratingScoreOptions}}"
-                wx:for-item="score"
-                wx:key="*this"
-                class="rating-button"
-                data-dish-id="{{item.id}}"
-                data-score="{{score}}"
-                bindtap="onRateTap"
-                aria-label="给 {{item.name}} 打 {{score}} 分"
-              >{{score}}</button>
+            <view class="rank-score">
+              <text class="rank-score-value">{{item.scoreText}}</text>
+              <text class="rank-score-label">{{item.ratingText}}</text>
             </view>
           </view>
-          <view class="rank-score">
-            <text class="rank-score-value">{{item.scoreText}}</text>
-            <text class="rank-score-label">{{item.ratingText}}</text>
-          </view>
-        </view>
+        </block>
       </view>
     </view>
 
@@ -118,7 +144,7 @@
       </view>
       <scroll-view class="category-scroll" scroll-x show-scrollbar="{{false}}">
         <view class="category-list">
-          <text class="category-chip" wx:for="{{categoryRows}}" wx:key="id">{{item.name}}</text>
+          <text class="category-chip chip-{{index % 4}}" wx:for="{{categoryRows}}" wx:key="id">{{item.name}}</text>
         </view>
       </scroll-view>
     </view>
@@ -131,6 +157,7 @@
 
   <view class="submit-mask {{submitSheetClosing ? 'is-closing' : ''}}" wx:if="{{showSubmitSheet}}" bindtap="closeSubmitSheet"></view>
   <scroll-view class="submit-sheet {{submitSheetClosing ? 'is-closing' : ''}}" wx:if="{{showSubmitSheet}}" scroll-y show-scrollbar="{{false}}">
+    <view class="sheet-grabber"></view>
     <view class="sheet-header">
       <view>
         <text class="sheet-kicker">推荐一道菜</text>

@@ -17,8 +17,12 @@ import { medium as mediumHaptic } from '../../utils/haptic'
 const SCHOOL_ID = 'bistu'
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024
 const DISH_PLACEHOLDER = '/images/dishes/dish-fallback.webp'
-const RANDOM_ROLL_DURATION = 360
-const RANDOM_SWAP_DELAY = RANDOM_ROLL_DURATION / 2
+const RANDOM_ROLL_DURATION = 1600
+const RANDOM_ROLL_FRAME_DELAY = 64
+const RANDOM_SETTLE_STEP_DURATION = 180
+const RANDOM_SETTLE_BUFFER = 32
+const RANDOM_REEL_ITEM_COUNT = 10
+const RANDOM_REEL_ITEM_HEIGHT = 148
 const SUBMIT_SHEET_CLOSE_DURATION = 260
 
 interface DisplayDish {
@@ -47,11 +51,24 @@ interface RandomPick {
   key: string
 }
 
+interface RandomReelItem extends RandomPick {
+  reelId: string
+}
+
 const EMPTY_RANDOM_PICK: RandomPick = {
-  shop: '暂无窗口数据',
-  place: '等待食堂窗口同步',
+  shop: '点一下换一个',
+  place: '',
   key: '',
 }
+
+const sampleDrinks: RandomPick[] = [
+  { shop: '珍珠奶茶', place: '南门 · 奶茶店', key: 'drink-milk-tea' },
+  { shop: '生椰拿铁', place: '图书馆 · 咖啡吧', key: 'drink-latte' },
+  { shop: '现磨豆浆', place: '一食堂 · 一楼', key: 'drink-soy-milk' },
+  { shop: '柠檬水', place: '二食堂 · 一楼', key: 'drink-lemon' },
+  { shop: '酸奶', place: '校内便利店', key: 'drink-yogurt' },
+  { shop: '冰美式', place: '图书馆 · 咖啡吧', key: 'drink-americano' },
+]
 
 const mockCanteenRows: CanteenView[] = [
   {
@@ -187,6 +204,14 @@ function buildRandomPool(canteens: CanteenView[]) {
   return pool
 }
 
+function buildDrinkPool(dishes: DisplayDish[]): RandomPick[] {
+  const keywords = ['饮品', '饮料', '奶茶', '咖啡', '果汁', '冷饮']
+  const matched = dishes
+    .filter((dish) => keywords.some((word) => dish.categoryName.includes(word)))
+    .map((dish) => ({ shop: dish.name, place: dish.placeText, key: dish.id }))
+  return matched.length ? matched : sampleDrinks
+}
+
 function resolveCanteenRows(rows: CanteenView[]) {
   return buildRandomPool(rows).length ? rows : mockCanteenRows
 }
@@ -195,6 +220,42 @@ function pickRandomShop(canteens: CanteenView[]) {
   const pool = buildRandomPool(resolveCanteenRows(canteens))
   if (!pool.length) return EMPTY_RANDOM_PICK
   return pool[Math.floor(Math.random() * pool.length)]
+}
+
+function pickFromPool(pool: RandomPick[], excludedKeys: string[]) {
+  const candidates = pool.filter((item) => !excludedKeys.includes(item.key))
+  const source = candidates.length ? candidates : pool
+  return source[Math.floor(Math.random() * source.length)]
+}
+
+function toRandomReelItem(pick: RandomPick, index: number): RandomReelItem {
+  return {
+    ...pick,
+    reelId: `${index}-${pick.key || 'empty'}`,
+  }
+}
+
+function buildRandomReel(pool: RandomPick[], current: RandomPick) {
+  if (!pool.length) {
+    return {
+      items: [toRandomReelItem(EMPTY_RANDOM_PICK, 0)],
+      final: EMPTY_RANDOM_PICK,
+    }
+  }
+
+  const currentInPool = current.key && pool.some((item) => item.key === current.key)
+  const picks: RandomPick[] = [currentInPool ? current : pickFromPool(pool, [])]
+  while (picks.length < RANDOM_REEL_ITEM_COUNT - 1) {
+    picks.push(pickFromPool(pool, [picks[picks.length - 1].key]))
+  }
+  picks.push(pickFromPool(pool, [picks[0].key, picks[picks.length - 1].key]))
+  const reversedPicks = picks.slice().reverse()
+  const guardPick = pickFromPool(pool, [reversedPicks[0].key])
+
+  return {
+    items: [guardPick, ...reversedPicks].map(toRandomReelItem),
+    final: picks[picks.length - 1],
+  }
 }
 
 Page({
@@ -207,8 +268,12 @@ Page({
     leadDish: sampleDishes[0],
     rankingRows: sampleDishes,
     categoryRows: sampleCategories,
+    decisionMode: 'food' as 'food' | 'drink',
     randomPick: EMPTY_RANDOM_PICK,
+    randomReel: [toRandomReelItem(EMPTY_RANDOM_PICK, 0)],
+    randomReelOffset: 0,
     randomRolling: false,
+    randomSettleDirection: '',
     ratingScoreOptions: [1, 2, 3, 4, 5],
     registered: false,
     isAdmin: false,
@@ -228,8 +293,11 @@ Page({
   },
 
   randomRollTimer: 0,
-  randomSwapTimer: 0,
   randomRollSequence: 0,
+  randomRollActive: false,
+  homeLoadSequence: 0,
+  pageDestroyed: false,
+  pageVisible: false,
   submitSheetCloseTimer: 0,
   submitSheetSequence: 0,
   resetSubmitAfterClose: false,
@@ -239,6 +307,8 @@ Page({
   canteenRows: mockCanteenRows,
 
   onLoad() {
+    this.pageDestroyed = false
+    this.pageVisible = true
     const info = wx.getWindowInfo()
     this.setData({
       topInset: (info.statusBarHeight || 0) + 12,
@@ -249,12 +319,33 @@ Page({
   },
 
   onShow() {
+    this.pageVisible = true
     this.refreshAccessState()
   },
 
-  onUnload() {
+  onHide() {
+    this.pageVisible = false
+    wx.hideLoading()
+    const wasRolling = this.randomRollActive
     this.randomRollSequence += 1
+    this.randomRollActive = false
     this.clearRandomRollTimers()
+    if (!wasRolling && !this.data.randomRolling && !this.data.randomSettleDirection) return
+    this.setData({
+      randomRolling: false,
+      randomSettleDirection: '',
+      randomReel: [toRandomReelItem(this.data.randomPick, 0)],
+      randomReelOffset: 0,
+    })
+  },
+
+  onUnload() {
+    this.pageDestroyed = true
+    this.pageVisible = false
+    this.randomRollSequence += 1
+    this.randomRollActive = false
+    this.clearRandomRollTimers()
+    this.homeLoadSequence += 1
     this.submitSheetSequence += 1
     this.clearSubmitSheetCloseTimer()
     this.resetSubmitAfterClose = false
@@ -297,6 +388,9 @@ Page({
   },
 
   async loadHomeData() {
+    if (this.pageDestroyed) return
+    this.homeLoadSequence += 1
+    const sequence = this.homeLoadSequence
     this.setData({ loading: true, networkNote: '正在更新' })
     try {
       const [rankRows, categoryRows, announcementText, canteenRows] = await Promise.all([
@@ -305,6 +399,7 @@ Page({
         announcement(SCHOOL_ID),
         canteenData(SCHOOL_ID).catch(() => [] as CanteenView[]),
       ])
+      if (sequence !== this.homeLoadSequence) return
 
       this.dishes = rankRows.length ? rankRows.map(normalizeDish) : sampleDishes
       this.categoriesCache = categoryRows.length ? categoryRows : sampleCategories
@@ -314,24 +409,35 @@ Page({
         announcementText || '暂无公告，今天的版面留给同学推荐。',
       )
     } catch (error) {
+      if (sequence !== this.homeLoadSequence) return
       this.dishes = sampleDishes
       this.categoriesCache = sampleCategories
       this.canteenRows = mockCanteenRows
       this.setHomeData('离线样例', '暂时没有更新到最新内容，随机推荐仍可使用。')
     } finally {
-      this.setData({ loading: false })
+      if (sequence === this.homeLoadSequence) this.setData({ loading: false })
     }
   },
 
   setHomeData(networkNote: string, announcementText: string) {
     const currentRandom = this.data.randomPick
+    const nextRandom = currentRandom && currentRandom.key
+      ? currentRandom
+      : this.data.decisionMode === 'drink'
+        ? pickFromPool(buildDrinkPool(this.dishes), [])
+        : pickRandomShop(this.canteenRows)
+    const leadDish = this.dishes[0] || sampleDishes[0]
     this.setData({
       networkNote,
       announcementText,
-      leadDish: this.dishes[0] || sampleDishes[0],
+      leadDish,
       rankingRows: this.dishes.slice(0, 6),
       categoryRows: this.categoriesCache.slice(0, 10),
-      randomPick: currentRandom && currentRandom.key ? currentRandom : pickRandomShop(this.canteenRows),
+      randomPick: this.randomRollActive ? currentRandom : nextRandom,
+      randomReel: this.randomRollActive
+        ? this.data.randomReel
+        : [toRandomReelItem(nextRandom, 0)],
+      randomReelOffset: this.randomRollActive ? this.data.randomReelOffset : 0,
     })
   },
 
@@ -350,39 +456,113 @@ Page({
   },
 
   clearRandomRollTimers() {
-    clearTimeout(this.randomSwapTimer)
     clearTimeout(this.randomRollTimer)
-    this.randomSwapTimer = 0
     this.randomRollTimer = 0
   },
 
-  rollRandomPick() {
+  switchDecisionMode(event: WechatMiniprogram.TouchEvent) {
+    const mode = String(event.currentTarget.dataset.mode || '')
+    if ((mode !== 'food' && mode !== 'drink') || mode === this.data.decisionMode) return
+
     this.clearRandomRollTimers()
     this.randomRollSequence += 1
     const sequence = this.randomRollSequence
-    const next = pickRandomShop(this.canteenRows)
-    if (!next.key) {
-      this.setData({ randomRolling: false, randomPick: next })
-      wx.showToast({ title: '暂无窗口数据', icon: 'none' })
+    this.randomRollActive = false
+    this.setData({
+      decisionMode: mode,
+      randomRolling: false,
+      randomSettleDirection: '',
+      randomPick: EMPTY_RANDOM_PICK,
+      randomReel: [toRandomReelItem(EMPTY_RANDOM_PICK, 0)],
+      randomReelOffset: 0,
+    }, () => {
+      if (sequence !== this.randomRollSequence) return
+      this.rollRandomPick()
+    })
+  },
+
+  rollRandomPick() {
+    if (this.randomRollActive || this.data.randomRolling || this.data.randomSettleDirection) return
+
+    this.clearRandomRollTimers()
+    this.randomRollSequence += 1
+    this.randomRollActive = true
+    const sequence = this.randomRollSequence
+    const pool = this.data.decisionMode === 'drink'
+      ? buildDrinkPool(this.dishes)
+      : buildRandomPool(resolveCanteenRows(this.canteenRows))
+    const { items, final } = buildRandomReel(pool, this.data.randomPick)
+    const finalOffset = -RANDOM_REEL_ITEM_HEIGHT
+    if (!final.key) {
+      this.randomRollActive = false
+      this.setData({
+        randomRolling: false,
+        randomSettleDirection: '',
+        randomPick: final,
+        randomReel: items,
+        randomReelOffset: 0,
+      })
+      wx.showToast({
+        title: this.data.decisionMode === 'drink' ? '暂无饮品数据' : '暂无窗口数据',
+        icon: 'none',
+      })
       return
     }
 
-    this.setData({ randomRolling: false }, () => {
+    this.setData({
+      randomRolling: false,
+      randomSettleDirection: '',
+      randomReel: items,
+      randomReelOffset: -(items.length - 1) * RANDOM_REEL_ITEM_HEIGHT,
+    }, () => {
       if (sequence !== this.randomRollSequence) return
 
       this.setData({ randomRolling: true }, () => {
         if (sequence !== this.randomRollSequence) return
 
-        this.randomSwapTimer = setTimeout(() => {
+        this.setData({
+          randomReelOffset: finalOffset,
+        }, () => {
           if (sequence !== this.randomRollSequence) return
-          this.setData({ randomPick: next })
-          this.randomSwapTimer = 0
-        }, RANDOM_SWAP_DELAY)
-        this.randomRollTimer = setTimeout(() => {
-          if (sequence !== this.randomRollSequence) return
-          this.setData({ randomRolling: false })
-          this.randomRollTimer = 0
-        }, RANDOM_ROLL_DURATION)
+
+          this.randomRollTimer = setTimeout(() => {
+            if (sequence !== this.randomRollSequence) return
+            const settleDirection = Math.random() < 0.5 ? 'settle-prev' : 'settle-next'
+            this.setData({
+              randomRolling: false,
+              randomSettleDirection: settleDirection,
+            }, () => {
+              if (sequence !== this.randomRollSequence) return
+
+              this.setData({
+                randomReelOffset: settleDirection === 'settle-prev'
+                  ? 0
+                  : finalOffset - RANDOM_REEL_ITEM_HEIGHT,
+              }, () => {
+                if (sequence !== this.randomRollSequence) return
+
+                this.randomRollTimer = setTimeout(() => {
+                  if (sequence !== this.randomRollSequence) return
+                  this.setData({ randomReelOffset: finalOffset }, () => {
+                    if (sequence !== this.randomRollSequence) return
+
+                    this.randomRollTimer = setTimeout(() => {
+                      if (sequence !== this.randomRollSequence) return
+                      this.randomRollTimer = 0
+                      this.randomRollActive = false
+                      this.setData({
+                        randomPick: final,
+                        randomReel: [toRandomReelItem(final, 0)],
+                        randomReelOffset: 0,
+                        randomSettleDirection: '',
+                      })
+                    }, RANDOM_SETTLE_STEP_DURATION + RANDOM_SETTLE_BUFFER)
+                  })
+                }, RANDOM_SETTLE_STEP_DURATION)
+              })
+            })
+          }, RANDOM_ROLL_DURATION + RANDOM_ROLL_FRAME_DELAY)
+        })
       })
     })
   },
@@ -412,12 +592,16 @@ Page({
     wx.showLoading({ title: '评分中' })
     try {
       const ratedDish = await rateDish(dishId, score)
+      if (this.pageDestroyed) return
       if (!this.updateRatedDishDisplay(ratedDish)) await this.loadHomeData()
-      wx.showToast({ title: '已评分', icon: 'success' })
+      if (this.pageDestroyed) return
+      if (this.pageVisible) wx.showToast({ title: '已评分', icon: 'success' })
     } catch (error) {
-      wx.showToast({ title: error instanceof Error ? error.message : '评分失败', icon: 'none' })
+      if (!this.pageDestroyed && this.pageVisible) {
+        wx.showToast({ title: error instanceof Error ? error.message : '评分失败', icon: 'none' })
+      }
     } finally {
-      wx.hideLoading()
+      if (this.pageVisible) wx.hideLoading()
     }
   },
 
@@ -482,10 +666,12 @@ Page({
       sizeType: ['compressed'],
       sourceType: ['album', 'camera'],
       success: (res) => {
+        if (this.pageDestroyed) return
         const imagePath = res.tempFilePaths[0]
         wx.getFileInfo({
           filePath: imagePath,
           success: (fileInfo) => {
+            if (this.pageDestroyed) return
             if (fileInfo.size > MAX_IMAGE_SIZE) {
               wx.showToast({ title: '图片不能超过 5MB', icon: 'none' })
               return
@@ -496,10 +682,13 @@ Page({
               imageName: parts[parts.length - 1] || '已选择图片',
             })
           },
-          fail: () => wx.showToast({ title: '读取图片失败', icon: 'none' }),
+          fail: () => {
+            if (!this.pageDestroyed) wx.showToast({ title: '读取图片失败', icon: 'none' })
+          },
         })
       },
       fail: (error) => {
+        if (this.pageDestroyed) return
         if (!String(error.errMsg || '').includes('cancel')) {
           wx.showToast({ title: '未能选择图片', icon: 'none' })
         }
@@ -547,17 +736,20 @@ Page({
         shopName: form.shopName.trim(),
         floorName: form.floorName.trim(),
       }, this.data.imagePath)
-      wx.showToast({ title: '已提交', icon: 'success' })
+      if (this.pageDestroyed) return
+      if (this.pageVisible) wx.showToast({ title: '已提交', icon: 'success' })
       if (submitSheetSequence === this.submitSheetSequence && this.data.showSubmitSheet) {
         this.resetSubmitAfterClose = true
         this.closeSubmitSheet()
       }
       void this.loadHomeData()
     } catch (error) {
-      wx.showToast({ title: error instanceof Error ? error.message : '提交失败', icon: 'none' })
+      if (!this.pageDestroyed && this.pageVisible) {
+        wx.showToast({ title: error instanceof Error ? error.message : '提交失败', icon: 'none' })
+      }
     } finally {
-      wx.hideLoading()
-      this.setData({ submitting: false })
+      if (this.pageVisible) wx.hideLoading()
+      if (!this.pageDestroyed) this.setData({ submitting: false })
     }
   },
 })

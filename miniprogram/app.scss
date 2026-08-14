@@ -1,24 +1,70 @@
 page {
-  --color-page: #fcf9f8;
-  --color-surface: rgba(255, 255, 255, 0.76);
-  --color-field: rgba(250, 248, 247, 0.72);
-  --color-ink: #1c1b1b;
-  --color-muted: #7e775f;
-  --color-muted-strong: #4d4732;
-  --color-line: #e5e1dc;
-  --color-yellow: #ffeca8;
-  --color-blue: #2170e4;
-  --color-red: #fa5151;
-  --color-green: #28a66a;
-  --color-green-soft: #dff6e9;
-  --color-green-ink: #17643f;
-  --glass-highlight: rgba(255, 255, 255, 0.82);
-  --border-width: 3rpx;
-  --radius-xs: 8rpx;
-  --radius-sm: 12rpx;
-  --radius-md: 16rpx;
-  --shadow-small: 3rpx 3rpx 0 var(--color-ink);
-  --shadow-card: 6rpx 6rpx 0 var(--color-ink);
+  --color-page: #fbeac5;
+  --color-surface: #fffbf2;
+  --color-surface-sunken: #f6e6c8;
+
+  --color-ink: #4a3524;
+  --color-ink-2: #684b34;
+  --color-ink-3: #75583f;
+
+  --color-stroke: #6b4a32;
+  --stroke-heavy: 4rpx;
+  --stroke-base: 3rpx;
+  --stroke-light: 2rpx;
+  --color-border: #e0c9a0;
+
+  --color-brand: #a34a16;
+  --color-brand-soft: #fce3c8;
+
+  --color-teal: #1b6e67;
+  --color-teal-soft: #d9efe9;
+  --color-leaf: #6fbf3b;
+  --color-berry: #b9342f;
+  --color-berry-soft: #fbe0de;
+  --color-yolk: #f5a623;
+
+  --color-red: var(--color-berry);
+  --color-red-soft: var(--color-berry-soft);
+  --color-green: var(--color-leaf);
+  --color-green-soft: #e4f4d6;
+  --color-green-ink: #3d7a1f;
+  --color-yellow: var(--color-yolk);
+
+  --fs-1: 40rpx;
+  --fs-2: 32rpx;
+  --fs-3: 28rpx;
+  --fs-4: 24rpx;
+  --fs-5: 22rpx;
+  --fs-6: 20rpx;
+  --fs-hero: 56rpx;
+
+  --sp-1: 8rpx;
+  --sp-2: 16rpx;
+  --sp-3: 24rpx;
+  --sp-4: 32rpx;
+  --sp-5: 48rpx;
+
+  --radius-xs: 12rpx;
+  --radius-sm: 18rpx;
+  --radius-md: 26rpx;
+  --radius-lg: 32rpx;
+  --radius-full: 999rpx;
+
+  --shadow-sticker: 6rpx 6rpx 0 var(--color-stroke);
+  --shadow-sticker-sm: 3rpx 3rpx 0 var(--color-stroke);
+  --shadow-soft: 0 -8rpx 32rpx rgba(107, 74, 50, 0.14);
+
+  --border-width: var(--stroke-base);
+  --color-field: var(--color-surface-sunken);
+  --color-line: var(--color-border);
+  --color-muted: var(--color-ink-3);
+  --color-muted-strong: var(--color-ink-2);
+  --color-blue: var(--color-brand);
+  --shadow-small: var(--shadow-sticker-sm);
+  --shadow-card: var(--shadow-sticker);
+  --glass-highlight: transparent;
+  --glass-depth: transparent;
+
   min-height: 100%;
   background: var(--color-page);
   color: var(--color-ink);
@@ -61,10 +107,8 @@ page button:focus {
 }
 
 page button:not([disabled]):active {
-  transform: translate(2rpx, 2rpx);
-  box-shadow:
-    1rpx 1rpx 0 var(--color-ink),
-    inset 0 1rpx 0 var(--glass-highlight);
+  transform: translate(3rpx, 3rpx);
+  box-shadow: 0 0 0 var(--color-stroke);
 }
 
 input,
@@ -78,11 +122,8 @@ textarea {
 page .ui-page input:focus,
 page .ui-page textarea:focus {
   outline: 0;
-  border-color: var(--color-blue);
-  background-color: rgba(255, 255, 255, 0.9);
-  box-shadow:
-    0 0 0 4rpx rgba(33, 112, 228, 0.12),
-    inset 0 2rpx 0 var(--glass-highlight);
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 3rpx var(--color-brand-soft);
 }
 
 .ui-page {
@@ -101,11 +142,7 @@ page .ui-page textarea:focus {
   margin-right: -24rpx;
   margin-left: -24rpx;
   padding: 12rpx 24rpx 20rpx;
-  border-bottom: var(--border-width) solid var(--color-ink);
-  background: rgba(252, 249, 248, 0.78);
-  box-shadow: 0 4rpx 0 rgba(28, 27, 27, 0.12), inset 0 2rpx 0 var(--glass-highlight);
-  -webkit-backdrop-filter: blur(20rpx);
-  backdrop-filter: blur(20rpx);
+  background: transparent;
 }
 
 .ui-page-heading {
@@ -119,7 +156,7 @@ page .ui-page textarea:focus {
 .ui-page-title {
   color: var(--color-ink);
   font-size: 36rpx;
-  font-weight: 900;
+  font-weight: 600;
 }
 
 .ui-page-subtitle {
@@ -140,13 +177,13 @@ page .ui-page textarea:focus {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: var(--border-width) solid var(--color-ink);
+  border: var(--stroke-light) solid var(--color-stroke);
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.84);
-  box-shadow: var(--shadow-small), inset 0 2rpx 0 var(--glass-highlight);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sticker-sm);
   color: var(--color-ink);
   font-size: 42rpx;
-  font-weight: 800;
+  font-weight: 500;
 }
 
 .ui-button-icon {
@@ -156,32 +193,27 @@ page .ui-page textarea:focus {
   transition: transform 120ms ease-out;
 }
 
-.ui-icon-button:active .ui-button-icon {
-  transform: scale(0.94);
-}
-
 .ui-card {
-  border: var(--border-width) solid var(--color-ink);
-  border-radius: var(--radius-md);
+  padding: var(--sp-3);
+  border: var(--stroke-base) solid var(--color-stroke);
+  border-radius: 26rpx 30rpx 24rpx 28rpx;
   background: var(--color-surface);
-  box-shadow: var(--shadow-card), inset 0 2rpx 0 var(--glass-highlight);
+  box-shadow: var(--shadow-sticker);
   animation: ui-rise-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .ui-section-head {
   display: flex;
-  align-items: flex-end;
+  align-items: baseline;
   justify-content: space-between;
   gap: 20rpx;
   margin-bottom: 22rpx;
-  padding-bottom: 14rpx;
-  border-bottom: var(--border-width) solid var(--color-ink);
 }
 
 .ui-section-title {
   color: var(--color-ink);
   font-size: 32rpx;
-  font-weight: 900;
+  font-weight: 600;
 }
 
 .ui-section-subtitle {
@@ -199,16 +231,15 @@ page .ui-page textarea:focus {
 .ui-field-label {
   color: var(--color-ink);
   font-size: 23rpx;
-  font-weight: 800;
+  font-weight: 500;
 }
 
 .ui-field input,
 .ui-field textarea {
   width: 100%;
-  border: 2rpx solid var(--color-ink);
+  border: var(--stroke-light) solid var(--color-stroke);
   border-radius: var(--radius-sm);
-  background: var(--color-field);
-  box-shadow: inset 0 2rpx 0 var(--glass-highlight);
+  background: var(--color-surface-sunken);
   color: var(--color-ink);
   font-size: 25rpx;
 }
@@ -229,16 +260,16 @@ page .ui-page textarea:focus {
 .ui-danger-button {
   width: 100% !important;
   min-width: 0;
-  height: 84rpx;
-  border: var(--border-width) solid var(--color-ink);
+  height: 88rpx;
+  border: var(--stroke-base) solid var(--color-stroke);
   border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-small), inset 0 2rpx 0 var(--glass-highlight);
+  box-shadow: var(--shadow-sticker-sm);
   font-size: 27rpx;
-  font-weight: 900;
+  font-weight: 600;
 }
 
 .ui-primary-button {
-  background: rgba(33, 112, 228, 0.9);
+  background: var(--color-brand);
   color: #ffffff;
 }
 
@@ -248,21 +279,21 @@ page .ui-page textarea:focus {
 }
 
 .ui-danger-button {
-  background: rgba(250, 81, 81, 0.9);
+  background: var(--color-berry);
   color: #ffffff;
 }
 
 .ui-primary-button[disabled],
 .ui-secondary-button[disabled],
 .ui-danger-button[disabled] {
-  opacity: 0.58;
+  opacity: 0.45;
 }
 
 .ui-sheet-mask {
   position: fixed;
   z-index: 100;
   inset: 0;
-  background: rgba(20, 20, 20, 0.58);
+  background: rgba(20, 20, 20, 0.42);
   animation: ui-mask-in 220ms ease-out both;
 }
 
@@ -275,11 +306,10 @@ page .ui-page textarea:focus {
   height: 88vh;
   max-height: 88vh;
   padding: 30rpx 28rpx calc(30rpx + env(safe-area-inset-bottom));
-  border-top: var(--border-width) solid var(--color-ink);
-  background: rgba(252, 249, 248, 0.92);
-  box-shadow: inset 0 2rpx 0 var(--glass-highlight);
-  -webkit-backdrop-filter: blur(24rpx);
-  backdrop-filter: blur(24rpx);
+  border-top: var(--stroke-base) solid var(--color-stroke);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
   animation: ui-sheet-in 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
@@ -334,8 +364,7 @@ page .ui-page textarea:focus {
     animation: none !important;
   }
 
-  page button:not([disabled]):active,
-  .ui-icon-button:active .ui-button-icon {
+  page button:not([disabled]):active {
     transform: none;
   }
 }
