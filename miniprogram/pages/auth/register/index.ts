@@ -18,6 +18,8 @@ function pickProfile(form: RegisterForm): UserProfile {
 }
 
 Page({
+  returnTimer: null as ReturnType<typeof setTimeout> | null,
+
   data: {
     statusBarHeight: 0,
     readerTop: 10,
@@ -42,6 +44,13 @@ Page({
 
   onShow() {
     this.refreshProfileState()
+  },
+
+  onUnload() {
+    if (this.returnTimer !== null) {
+      clearTimeout(this.returnTimer)
+      this.returnTimer = null
+    }
   },
 
   refreshProfileState() {
@@ -77,14 +86,16 @@ Page({
       this.refreshProfileState()
       wx.hideLoading()
       wx.showToast({ title: '已保存', icon: 'success' })
-      setTimeout(() => this.goBack(), 600)
+      this.returnTimer = setTimeout(() => {
+        this.returnTimer = null
+        this.goBack()
+      }, 1000)
     } catch (error) {
       wx.hideLoading()
       wx.showToast({
         title: error instanceof Error ? error.message : '保存失败',
         icon: 'none',
       })
-    } finally {
       this.setData({ submitting: false })
     }
   },

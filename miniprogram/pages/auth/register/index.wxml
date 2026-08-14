@@ -1,6 +1,8 @@
 <view class="ui-page profile-page" style="padding-top: {{readerTop}}px;">
   <view class="ui-topbar">
-    <button class="ui-icon-button" bindtap="goBack" aria-label="返回上一页">‹</button>
+    <button class="ui-icon-button" bindtap="goBack" aria-label="返回上一页">
+      <image class="ui-button-icon" src="/images/icons/back.svg" mode="aspectFit"></image>
+    </button>
     <view class="ui-page-heading">
       <text class="ui-page-title">个人资料</text>
       <text class="ui-page-subtitle">投稿和评分使用的公开身份</text>
@@ -12,6 +14,7 @@
     <button
       class="avatar-button"
       open-type="chooseAvatar"
+      bindtap="__hapticTap"
       bindchooseavatar="onChooseAvatar"
       aria-label="选择头像"
     >

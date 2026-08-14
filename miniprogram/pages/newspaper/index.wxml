@@ -45,7 +45,7 @@
       </view>
 
       <view class="feature">
-        <image class="feature-image" src="{{leadDish.imageUrl}}" mode="aspectFill"></image>
+        <image class="feature-image" src="{{leadDish.imageUrl}}" mode="aspectFill" binderror="onLeadDishImageError"></image>
         <view class="feature-copy">
           <text class="feature-category">{{leadDish.categoryName}}</text>
           <text class="feature-title">{{leadDish.name}}</text>
@@ -129,40 +129,49 @@
     </view>
   </view>
 
-  <view class="submit-mask" wx:if="{{showSubmitSheet}}" bindtap="closeSubmitSheet"></view>
-  <scroll-view class="submit-sheet" wx:if="{{showSubmitSheet}}" scroll-y show-scrollbar="{{false}}">
+  <view class="submit-mask {{submitSheetClosing ? 'is-closing' : ''}}" wx:if="{{showSubmitSheet}}" bindtap="closeSubmitSheet"></view>
+  <scroll-view class="submit-sheet {{submitSheetClosing ? 'is-closing' : ''}}" wx:if="{{showSubmitSheet}}" scroll-y show-scrollbar="{{false}}">
     <view class="sheet-header">
       <view>
         <text class="sheet-kicker">推荐一道菜</text>
         <text class="sheet-title">让更多同学吃到</text>
       </view>
-      <button class="sheet-close" bindtap="closeSubmitSheet" aria-label="关闭投稿表单">×</button>
+      <button class="sheet-close" bindtap="closeSubmitSheet" aria-label="关闭投稿表单">
+        <image class="ui-button-icon" src="/images/icons/close.svg" mode="aspectFit"></image>
+      </button>
     </view>
 
     <view class="field">
       <text class="field-label">菜品名称</text>
-      <input model:value="{{form.name}}" placeholder="例如 黄焖鸡米饭" maxlength="40" />
+      <input model:value="{{form.name}}" placeholder="例如 黄焖鸡米饭" maxlength="40" always-embed="{{true}}" />
     </view>
 
     <view class="field-grid">
       <view class="field">
         <text class="field-label">分类</text>
-        <input model:value="{{form.categoryName}}" placeholder="盖饭 / 粉面" maxlength="20" />
+        <input model:value="{{form.categoryName}}" placeholder="盖饭 / 粉面" maxlength="20" always-embed="{{true}}" />
       </view>
       <view class="field">
         <text class="field-label">楼层</text>
-        <input model:value="{{form.floorName}}" placeholder="一楼" maxlength="20" />
+        <input model:value="{{form.floorName}}" placeholder="一楼" maxlength="20" always-embed="{{true}}" />
       </view>
     </view>
 
     <view class="field">
       <text class="field-label">店铺或窗口</text>
-      <input model:value="{{form.shopName}}" placeholder="窗口名称" maxlength="40" />
+      <input model:value="{{form.shopName}}" placeholder="窗口名称" maxlength="40" always-embed="{{true}}" />
     </view>
 
     <view class="field">
       <text class="field-label">一句描述</text>
-      <textarea model:value="{{form.description}}" placeholder="口味、份量、适合什么时候吃" maxlength="160" show-confirm-bar="{{false}}" />
+      <textarea
+        model:value="{{form.description}}"
+        placeholder="口味、份量、适合什么时候吃"
+        maxlength="160"
+        show-confirm-bar="{{false}}"
+        fixed="{{true}}"
+        disable-default-padding="{{true}}"
+      />
     </view>
 
     <button class="image-picker" bindtap="chooseImage">

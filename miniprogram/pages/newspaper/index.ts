@@ -12,10 +12,14 @@ import {
   type CategoryView,
   type DishView,
 } from '../../utils/api'
+import { medium as mediumHaptic } from '../../utils/haptic'
 
 const SCHOOL_ID = 'bistu'
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024
-const DISH_PLACEHOLDER = '/images/dish-placeholder.svg'
+const DISH_PLACEHOLDER = '/images/dishes/dish-fallback.webp'
+const RANDOM_ROLL_DURATION = 360
+const RANDOM_SWAP_DELAY = RANDOM_ROLL_DURATION / 2
+const SUBMIT_SHEET_CLOSE_DURATION = 260
 
 interface DisplayDish {
   id: string
@@ -77,7 +81,7 @@ const sampleDishes: DisplayDish[] = [
     id: 'sample-1',
     name: '黄焖鸡米饭',
     description: '酱香浓郁，土豆软糯，是不知道吃什么时很稳的一道。',
-    imageUrl: DISH_PLACEHOLDER,
+    imageUrl: '/images/dishes/huangmenji-rice.webp',
     categoryName: '盖饭',
     placeText: '一食堂 · 一楼 · 黄焖鸡米饭',
     scoreText: '4.9',
@@ -88,7 +92,7 @@ const sampleDishes: DisplayDish[] = [
     id: 'sample-2',
     name: '麻辣香锅',
     description: '适合多人拼单，辣度稳定，午饭高峰也很有存在感。',
-    imageUrl: DISH_PLACEHOLDER,
+    imageUrl: '/images/dishes/mala-xiangguo.webp',
     categoryName: '麻辣',
     placeText: '一食堂 · 一楼 · 麻辣香锅',
     scoreText: '4.7',
@@ -99,7 +103,7 @@ const sampleDishes: DisplayDish[] = [
     id: 'sample-3',
     name: '桂林米粉',
     description: '出餐快，汤粉和拌粉都适合赶课前后。',
-    imageUrl: DISH_PLACEHOLDER,
+    imageUrl: '/images/dishes/guilin-rice-noodles.webp',
     categoryName: '粉面',
     placeText: '二食堂 · 一楼 · 桂林米粉',
     scoreText: '4.6',
@@ -210,6 +214,7 @@ Page({
     isAdmin: false,
     profileLabel: '设置资料',
     showSubmitSheet: false,
+    submitSheetClosing: false,
     submitting: false,
     imagePath: '',
     imageName: '',
@@ -223,6 +228,12 @@ Page({
   },
 
   randomRollTimer: 0,
+  randomSwapTimer: 0,
+  randomRollSequence: 0,
+  submitSheetCloseTimer: 0,
+  submitSheetSequence: 0,
+  resetSubmitAfterClose: false,
+  reopenSubmitAfterClose: false,
   dishes: sampleDishes,
   categoriesCache: sampleCategories,
   canteenRows: mockCanteenRows,
@@ -242,7 +253,12 @@ Page({
   },
 
   onUnload() {
-    if (this.randomRollTimer) clearTimeout(this.randomRollTimer)
+    this.randomRollSequence += 1
+    this.clearRandomRollTimers()
+    this.submitSheetSequence += 1
+    this.clearSubmitSheetCloseTimer()
+    this.resetSubmitAfterClose = false
+    this.reopenSubmitAfterClose = false
   },
 
   onPullDownRefresh() {
@@ -264,6 +280,7 @@ Page({
   },
 
   openAdmin() {
+    mediumHaptic()
     wx.navigateTo({ url: '/pages/admin/index' })
   },
 
@@ -322,8 +339,27 @@ Page({
     this.loadHomeData()
   },
 
+  onLeadDishImageError() {
+    const leadDish = this.data.leadDish
+    if (leadDish.imageUrl === DISH_PLACEHOLDER) return
+
+    this.dishes = this.dishes.map((dish) => (
+      dish.id === leadDish.id ? { ...dish, imageUrl: DISH_PLACEHOLDER } : dish
+    ))
+    this.setData({ leadDish: { ...leadDish, imageUrl: DISH_PLACEHOLDER } })
+  },
+
+  clearRandomRollTimers() {
+    clearTimeout(this.randomSwapTimer)
+    clearTimeout(this.randomRollTimer)
+    this.randomSwapTimer = 0
+    this.randomRollTimer = 0
+  },
+
   rollRandomPick() {
-    if (this.randomRollTimer) clearTimeout(this.randomRollTimer)
+    this.clearRandomRollTimers()
+    this.randomRollSequence += 1
+    const sequence = this.randomRollSequence
     const next = pickRandomShop(this.canteenRows)
     if (!next.key) {
       this.setData({ randomRolling: false, randomPick: next })
@@ -331,11 +367,24 @@ Page({
       return
     }
 
-    this.setData({ randomRolling: true })
-    this.randomRollTimer = setTimeout(() => {
-      this.setData({ randomPick: next, randomRolling: false })
-      this.randomRollTimer = 0
-    }, 180)
+    this.setData({ randomRolling: false }, () => {
+      if (sequence !== this.randomRollSequence) return
+
+      this.setData({ randomRolling: true }, () => {
+        if (sequence !== this.randomRollSequence) return
+
+        this.randomSwapTimer = setTimeout(() => {
+          if (sequence !== this.randomRollSequence) return
+          this.setData({ randomPick: next })
+          this.randomSwapTimer = 0
+        }, RANDOM_SWAP_DELAY)
+        this.randomRollTimer = setTimeout(() => {
+          if (sequence !== this.randomRollSequence) return
+          this.setData({ randomRolling: false })
+          this.randomRollTimer = 0
+        }, RANDOM_ROLL_DURATION)
+      })
+    })
   },
 
   updateRatedDishDisplay(dish?: DishView) {
@@ -380,11 +429,50 @@ Page({
 
   openSubmitSheet() {
     if (!this.ensureRegisteredForSubmit()) return
-    this.setData({ showSubmitSheet: true })
+    if (this.data.submitSheetClosing) {
+      this.reopenSubmitAfterClose = true
+      return
+    }
+
+    this.clearSubmitSheetCloseTimer()
+    this.submitSheetSequence += 1
+    this.setData({ showSubmitSheet: true, submitSheetClosing: false })
   },
 
   closeSubmitSheet() {
-    this.setData({ showSubmitSheet: false })
+    if (!this.data.showSubmitSheet || this.data.submitSheetClosing) return
+
+    this.clearSubmitSheetCloseTimer()
+    this.reopenSubmitAfterClose = false
+    this.submitSheetSequence += 1
+    const sequence = this.submitSheetSequence
+    this.setData({ submitSheetClosing: true }, () => {
+      if (sequence !== this.submitSheetSequence) return
+
+      this.submitSheetCloseTimer = setTimeout(() => {
+        this.finishSubmitSheetClose(sequence)
+      }, SUBMIT_SHEET_CLOSE_DURATION)
+    })
+  },
+
+  finishSubmitSheetClose(sequence: number) {
+    if (sequence !== this.submitSheetSequence) return
+    this.submitSheetCloseTimer = 0
+    this.setData({ showSubmitSheet: false }, () => {
+      if (sequence !== this.submitSheetSequence) return
+      if (this.resetSubmitAfterClose) {
+        this.resetSubmitAfterClose = false
+        this.resetSubmitForm()
+      }
+      const reopen = this.reopenSubmitAfterClose
+      this.reopenSubmitAfterClose = false
+      this.setData({ showSubmitSheet: reopen, submitSheetClosing: false })
+    })
+  },
+
+  clearSubmitSheetCloseTimer() {
+    clearTimeout(this.submitSheetCloseTimer)
+    this.submitSheetCloseTimer = 0
   },
 
   chooseImage() {
@@ -440,6 +528,7 @@ Page({
   async submitDish() {
     if (!this.ensureRegisteredForSubmit() || this.data.submitting) return
 
+    const submitSheetSequence = this.submitSheetSequence
     const form = this.data.form as SubmitForm
     const name = form.name.trim()
     if (!name) {
@@ -458,10 +547,12 @@ Page({
         shopName: form.shopName.trim(),
         floorName: form.floorName.trim(),
       }, this.data.imagePath)
-      this.resetSubmitForm()
-      this.setData({ showSubmitSheet: false })
-      await this.loadHomeData()
       wx.showToast({ title: '已提交', icon: 'success' })
+      if (submitSheetSequence === this.submitSheetSequence && this.data.showSubmitSheet) {
+        this.resetSubmitAfterClose = true
+        this.closeSubmitSheet()
+      }
+      void this.loadHomeData()
     } catch (error) {
       wx.showToast({ title: error instanceof Error ? error.message : '提交失败', icon: 'none' })
     } finally {

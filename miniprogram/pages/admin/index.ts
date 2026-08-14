@@ -16,7 +16,7 @@ import {
 
 const SCHOOL_ID = 'bistu'
 const SCHOOL_NAME = '北京信息科技大学'
-const DISH_PLACEHOLDER = '/images/dish-placeholder.svg'
+const DISH_PLACEHOLDER = '/images/dishes/dish-fallback.webp'
 const STATUS_TEXT: Record<string, string> = {
   ACTIVE: '上架',
   OFFLINE: '下架',
@@ -26,6 +26,7 @@ const STATUS_TEXT: Record<string, string> = {
 
 interface DisplayDish extends DishView {
   imageUrl: string
+  displayImageUrl: string
   headlineText: string
   placeText: string
   scoreText: string
@@ -58,7 +59,8 @@ function normalizeDish(dish: DishView): DisplayDish {
   const status = dish.status || 'ACTIVE'
   return {
     ...dish,
-    imageUrl: dish.imageUrl || DISH_PLACEHOLDER,
+    imageUrl: dish.imageUrl || '',
+    displayImageUrl: dish.imageUrl || DISH_PLACEHOLDER,
     headlineText: buildDishHeadline(dish),
     placeText: [dish.canteenName, dish.floorName, dish.shopName].filter(Boolean).join(' · ') || '校园食堂',
     scoreText: Number(dish.avgScore || 0).toFixed(1),
@@ -100,6 +102,7 @@ Page({
     dishes: [] as DisplayDish[],
     visibleDishes: [] as DisplayDish[],
     showEditSheet: false,
+    editSheetClosing: false,
     editingDishId: '',
     editForm: {
       name: '',
@@ -111,6 +114,9 @@ Page({
     } as EditForm,
   },
 
+  editSheetCloseTimer: 0,
+  editSheetSequence: 0,
+
   onLoad() {
     const info = wx.getWindowInfo()
     const adminToken = getStoredAdminToken()
@@ -119,6 +125,11 @@ Page({
       adminToken,
     })
     if (adminToken) this.loadAdminData()
+  },
+
+  onUnload() {
+    this.editSheetSequence += 1
+    this.clearEditSheetCloseTimer()
   },
 
   goBack() {
@@ -219,6 +230,23 @@ Page({
     this.setData({ visibleDishes })
   },
 
+  onDishImageError(event: WechatMiniprogram.ImageError) {
+    const id = String(event.currentTarget.dataset.id || '')
+    if (!id) return
+    const target = this.data.visibleDishes.find((dish) => dish.id === id)
+    if (!target || target.displayImageUrl === DISH_PLACEHOLDER) return
+
+    const replaceBrokenImage = (dish: DisplayDish) => (
+      dish.id === id
+        ? { ...dish, displayImageUrl: DISH_PLACEHOLDER }
+        : dish
+    )
+    this.setData({
+      dishes: this.data.dishes.map(replaceBrokenImage),
+      visibleDishes: this.data.visibleDishes.map(replaceBrokenImage),
+    })
+  },
+
   switchStatus(event: WechatMiniprogram.BaseEvent) {
     this.setData({ activeStatus: String(event.currentTarget.dataset.status || 'all') })
     this.applyStatusFilter()
@@ -268,6 +296,22 @@ Page({
     const status = String(event.currentTarget.dataset.status || '')
     if (!id || !status) return
 
+    if (status === 'OFFLINE') {
+      const dish = this.data.dishes.find((item) => item.id === id)
+      const confirmed = await new Promise<boolean>((resolve) => {
+        wx.showModal({
+          title: '确认下架',
+          content: `确定下架“${dish?.name || '这道菜'}”吗？`,
+          confirmText: '下架',
+          confirmColor: '#c7362f',
+          cancelText: '取消',
+          success: (result) => resolve(result.confirm),
+          fail: () => resolve(false),
+        })
+      })
+      if (!confirmed) return
+    }
+
     try {
       await updateDish(this.data.adminToken, id, { status })
       wx.showToast({ title: status === 'ACTIVE' ? '已上架' : '已下架', icon: 'success' })
@@ -280,8 +324,11 @@ Page({
   openEditSheet(event: WechatMiniprogram.BaseEvent) {
     const dish = this.data.dishes.find((item) => item.id === event.currentTarget.dataset.id)
     if (!dish) return
+    this.clearEditSheetCloseTimer()
+    this.editSheetSequence += 1
     this.setData({
       showEditSheet: true,
+      editSheetClosing: false,
       editingDishId: dish.id,
       editForm: {
         name: dish.name || '',
@@ -289,13 +336,31 @@ Page({
         shopName: dish.shopName || '',
         floorName: dish.floorName || '',
         description: dish.description || '',
-        imageUrl: dish.imageUrl === DISH_PLACEHOLDER ? '' : dish.imageUrl || '',
+        imageUrl: dish.imageUrl || '',
       },
     })
   },
 
   closeEditSheet() {
-    this.setData({ showEditSheet: false, editingDishId: '' })
+    if (!this.data.showEditSheet || this.data.editSheetClosing) return
+    this.editSheetSequence += 1
+    const sequence = this.editSheetSequence
+    this.setData({ editSheetClosing: true })
+    this.editSheetCloseTimer = setTimeout(() => {
+      if (sequence !== this.editSheetSequence) return
+      this.editSheetCloseTimer = 0
+      this.setData({
+        showEditSheet: false,
+        editSheetClosing: false,
+        editingDishId: '',
+      })
+    }, 260)
+  },
+
+  clearEditSheetCloseTimer() {
+    if (!this.editSheetCloseTimer) return
+    clearTimeout(this.editSheetCloseTimer)
+    this.editSheetCloseTimer = 0
   },
 
   onEditInput(event: WechatMiniprogram.Input) {
@@ -312,6 +377,7 @@ Page({
       return
     }
 
+    const editSheetSequence = this.editSheetSequence
     this.setData({ saving: true })
     try {
       await updateDish(this.data.adminToken, editingDishId, {
@@ -323,7 +389,12 @@ Page({
         imageUrl: editForm.imageUrl.trim(),
       })
       wx.showToast({ title: '菜品已保存', icon: 'success' })
-      this.closeEditSheet()
+      if (
+        editSheetSequence === this.editSheetSequence
+        && this.data.editingDishId === editingDishId
+      ) {
+        this.closeEditSheet()
+      }
       await this.loadAdminData()
     } catch (error) {
       this.handleAdminError(error, '保存失败')

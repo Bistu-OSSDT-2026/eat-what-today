@@ -1,3 +1,34 @@
+.admin-page {
+  --glass-card: rgba(255, 255, 255, 0.72);
+  --glass-strong: rgba(255, 255, 255, 0.84);
+  --glass-field: rgba(250, 248, 247, 0.72);
+  --glass-highlight: rgba(255, 255, 255, 0.82);
+  background-color: #fcf9f8;
+}
+
+.admin-page button {
+  box-shadow: var(--shadow-small), inset 0 2rpx 0 var(--glass-highlight);
+}
+
+.admin-page .ui-icon-button {
+  background: var(--glass-strong);
+}
+
+.admin-page .ui-card {
+  background: var(--glass-card);
+  box-shadow: var(--shadow-card), inset 0 2rpx 0 var(--glass-highlight);
+}
+
+.admin-page .ui-field input,
+.admin-page .ui-field textarea {
+  background: var(--glass-field);
+  box-shadow: inset 0 2rpx 0 var(--glass-highlight);
+}
+
+.admin-page .ui-primary-button {
+  background: rgba(33, 112, 228, 0.88);
+}
+
 .login-wrap {
   min-height: 68vh;
   display: flex;
@@ -44,6 +75,7 @@
   gap: 20rpx;
   margin-bottom: 26rpx;
   padding: 0 4rpx;
+  animation: ui-rise-in 300ms 40ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .toolbar-copy {
@@ -76,14 +108,14 @@
   padding: 0 16rpx;
   border: 2rpx solid var(--color-ink);
   border-radius: var(--radius-xs);
-  background: var(--color-surface);
+  background: var(--glass-strong);
   color: var(--color-ink);
   font-size: 22rpx;
   font-weight: 800;
 }
 
 .toolbar-button.is-danger {
-  background: var(--color-red);
+  background: rgba(199, 54, 47, 0.88);
   color: #ffffff;
 }
 
@@ -92,6 +124,7 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14rpx;
   margin-bottom: 46rpx;
+  animation: ui-rise-in 320ms 80ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .stat-card {
@@ -102,20 +135,24 @@
   flex-direction: column;
   border: var(--border-width) solid var(--color-ink);
   border-radius: var(--radius-sm);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-small);
+  background: var(--glass-card);
+  box-shadow: var(--shadow-small), inset 0 2rpx 0 var(--glass-highlight);
+  transition:
+    background-color 160ms ease-out,
+    border-color 160ms ease-out,
+    box-shadow 160ms ease-out;
 }
 
 .stat-card.is-yellow {
-  background: var(--color-yellow);
+  background: rgba(255, 236, 168, 0.78);
 }
 
 .stat-card.is-green {
-  background: var(--color-green-soft);
+  background: rgba(209, 250, 229, 0.72);
 }
 
 .stat-card.is-red {
-  background: #fde3e0;
+  background: rgba(255, 206, 208, 0.72);
 }
 
 .stat-value {
@@ -133,6 +170,15 @@
 
 .admin-section {
   margin-bottom: 52rpx;
+  animation: ui-rise-in 320ms 120ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.admin-section + .admin-section {
+  animation-delay: 160ms;
+}
+
+.admin-section + .admin-section + .admin-section {
+  animation-delay: 200ms;
 }
 
 .section-button {
@@ -151,10 +197,15 @@
   padding: 10rpx 16rpx;
   border: 2rpx solid var(--color-ink);
   border-radius: var(--radius-xs);
-  background: var(--color-green-soft);
+  background: rgba(209, 250, 229, 0.72);
+  box-shadow: inset 0 2rpx 0 var(--glass-highlight);
   color: var(--color-green-ink);
   font-size: 21rpx;
   font-weight: 800;
+  transition:
+    background-color 160ms ease-out,
+    border-color 160ms ease-out,
+    box-shadow 160ms ease-out;
 }
 
 .category-empty {
@@ -175,7 +226,8 @@
   padding: 0 18rpx;
   border: 2rpx solid var(--color-ink);
   border-radius: var(--radius-sm);
-  background: var(--color-field);
+  background: var(--glass-field);
+  box-shadow: inset 0 2rpx 0 var(--glass-highlight);
   color: var(--color-ink);
   font-size: 24rpx;
 }
@@ -185,7 +237,7 @@
   height: 76rpx;
   border: var(--border-width) solid var(--color-ink);
   border-radius: var(--radius-sm);
-  background: var(--color-yellow);
+  background: rgba(255, 236, 168, 0.82);
   color: var(--color-ink);
   font-size: 24rpx;
   font-weight: 900;
@@ -209,14 +261,26 @@
   padding: 0 20rpx;
   border: 2rpx solid var(--color-ink);
   border-radius: var(--radius-xs);
-  background: var(--color-surface);
+  background: var(--glass-strong);
   color: var(--color-ink);
   font-size: 22rpx;
   font-weight: 800;
+  transition:
+    transform 120ms ease-out,
+    background-color 160ms ease-out,
+    border-color 160ms ease-out,
+    box-shadow 120ms ease-out;
 }
 
 .status-tab.active {
-  background: var(--color-yellow);
+  background: rgba(255, 236, 168, 0.82);
+}
+
+.status-tab:focus {
+  border-color: var(--color-blue);
+  box-shadow:
+    0 0 0 3rpx rgba(33, 112, 228, 0.12),
+    inset 0 2rpx 0 var(--glass-highlight);
 }
 
 .dish-admin-list {
@@ -231,8 +295,10 @@
   overflow: hidden;
   border: var(--border-width) solid var(--color-ink);
   border-radius: var(--radius-md);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-small);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: var(--shadow-small), inset 0 2rpx 0 var(--glass-highlight);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
 .dish-thumb {
@@ -240,6 +306,11 @@
   height: 100%;
   min-height: 230rpx;
   background: var(--color-field);
+  opacity: 1;
+  -webkit-filter: none;
+  filter: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
 .dish-body {
@@ -259,7 +330,8 @@
 .status-badge {
   padding: 5rpx 10rpx;
   border-radius: var(--radius-xs);
-  background: var(--color-green-soft);
+  background: rgba(209, 250, 229, 0.76);
+  box-shadow: inset 0 2rpx 0 var(--glass-highlight);
   color: var(--color-green-ink);
   font-size: 19rpx;
   font-weight: 900;
@@ -267,12 +339,12 @@
 
 .status-offline .status-badge,
 .status-rejected .status-badge {
-  background: #fde3e0;
+  background: rgba(255, 206, 208, 0.76);
   color: var(--color-red);
 }
 
 .status-pending .status-badge {
-  background: var(--color-yellow);
+  background: rgba(255, 236, 168, 0.82);
   color: var(--color-ink);
 }
 
@@ -314,19 +386,19 @@
   height: 58rpx;
   border: 2rpx solid var(--color-ink);
   border-radius: var(--radius-xs);
-  background: var(--color-surface);
+  background: var(--glass-strong);
   color: var(--color-ink);
   font-size: 21rpx;
   font-weight: 800;
 }
 
 .row-actions button.is-primary {
-  background: var(--color-blue);
+  background: rgba(33, 112, 228, 0.88);
   color: #ffffff;
 }
 
 .row-actions button.is-danger {
-  background: var(--color-red);
+  background: rgba(199, 54, 47, 0.88);
   color: #ffffff;
 }
 
@@ -347,10 +419,45 @@
   margin-bottom: 26rpx;
 }
 
+.edit-sheet {
+  border-top: var(--border-width) solid var(--color-ink);
+  background: rgba(252, 249, 248, 0.9);
+  box-shadow: 0 -6rpx 0 var(--color-ink), inset 0 2rpx 0 var(--glass-highlight);
+  -webkit-backdrop-filter: blur(24rpx) saturate(1.12);
+  backdrop-filter: blur(24rpx) saturate(1.12);
+}
+
+.admin-page .ui-sheet-mask.is-closing {
+  animation: admin-mask-out 220ms ease-in both;
+}
+
+.edit-sheet.is-closing {
+  animation: admin-sheet-out 260ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+@keyframes admin-mask-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes admin-sheet-out {
+  to {
+    transform: translateY(100%);
+  }
+}
+
 .sheet-head > view {
   min-width: 0;
+  flex: 1;
   display: flex;
   flex-direction: column;
+}
+
+.sheet-head .ui-icon-button {
+  margin-left: auto;
+  flex: 0 0 64rpx;
+  justify-self: end;
 }
 
 .sheet-title {

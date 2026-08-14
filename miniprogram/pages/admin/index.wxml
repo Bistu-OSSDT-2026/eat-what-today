@@ -1,6 +1,8 @@
 <view class="ui-page admin-page" style="padding-top: {{topInset}}px;">
   <view class="ui-topbar">
-    <button class="ui-icon-button" bindtap="goBack" aria-label="返回上一页">‹</button>
+    <button class="ui-icon-button" bindtap="goBack" aria-label="返回上一页">
+      <image class="ui-button-icon" src="/images/icons/back.svg" mode="aspectFit"></image>
+    </button>
     <view class="ui-page-heading">
       <text class="ui-page-title">管理后台</text>
       <text class="ui-page-subtitle">{{schoolName}}</text>
@@ -104,7 +106,14 @@
 
       <view class="dish-admin-list">
         <view class="dish-admin-row status-{{dish.statusClass}}" wx:for="{{visibleDishes}}" wx:for-item="dish" wx:key="id">
-          <image class="dish-thumb" src="{{dish.imageUrl}}" mode="aspectFill"></image>
+          <image
+            class="dish-thumb"
+            src="{{dish.displayImageUrl}}"
+            mode="aspectFit"
+            lazy-load="{{true}}"
+            data-id="{{dish.id}}"
+            binderror="onDishImageError"
+          ></image>
           <view class="dish-body">
             <view class="row-top">
               <text class="status-badge">{{dish.statusText}}</text>
@@ -140,41 +149,51 @@
     </view>
   </block>
 
-  <view class="ui-sheet-mask" wx:if="{{showEditSheet}}" bindtap="closeEditSheet"></view>
-  <scroll-view class="ui-sheet edit-sheet" wx:if="{{showEditSheet}}" scroll-y show-scrollbar="{{false}}">
+  <view class="ui-sheet-mask {{editSheetClosing ? 'is-closing' : ''}}" wx:if="{{showEditSheet}}" bindtap="closeEditSheet"></view>
+  <scroll-view class="ui-sheet edit-sheet {{editSheetClosing ? 'is-closing' : ''}}" wx:if="{{showEditSheet}}" scroll-y show-scrollbar="{{false}}">
     <view class="sheet-head">
       <view>
         <text class="panel-kicker">EDIT DISH</text>
         <text class="sheet-title">编辑菜品</text>
       </view>
-      <button class="ui-icon-button" bindtap="closeEditSheet" aria-label="关闭编辑表单">×</button>
+      <button class="ui-icon-button" bindtap="closeEditSheet" aria-label="关闭编辑表单">
+        <image class="ui-button-icon" src="/images/icons/close.svg" mode="aspectFit"></image>
+      </button>
     </view>
 
     <view class="ui-field">
       <text class="ui-field-label">菜品名称</text>
-      <input value="{{editForm.name}}" data-field="name" bindinput="onEditInput" maxlength="40" />
+      <input value="{{editForm.name}}" data-field="name" bindinput="onEditInput" maxlength="40" always-embed="{{true}}" />
     </view>
     <view class="field-grid">
       <view class="ui-field">
         <text class="ui-field-label">分类</text>
-        <input value="{{editForm.categoryName}}" data-field="categoryName" bindinput="onEditInput" maxlength="24" />
+        <input value="{{editForm.categoryName}}" data-field="categoryName" bindinput="onEditInput" maxlength="24" always-embed="{{true}}" />
       </view>
       <view class="ui-field">
         <text class="ui-field-label">楼层</text>
-        <input value="{{editForm.floorName}}" data-field="floorName" bindinput="onEditInput" maxlength="24" />
+        <input value="{{editForm.floorName}}" data-field="floorName" bindinput="onEditInput" maxlength="24" always-embed="{{true}}" />
       </view>
     </view>
     <view class="ui-field">
       <text class="ui-field-label">窗口</text>
-      <input value="{{editForm.shopName}}" data-field="shopName" bindinput="onEditInput" maxlength="40" />
+      <input value="{{editForm.shopName}}" data-field="shopName" bindinput="onEditInput" maxlength="40" always-embed="{{true}}" />
     </view>
     <view class="ui-field">
       <text class="ui-field-label">图片地址</text>
-      <input value="{{editForm.imageUrl}}" data-field="imageUrl" bindinput="onEditInput" placeholder="没有图片可留空" />
+      <input value="{{editForm.imageUrl}}" data-field="imageUrl" bindinput="onEditInput" placeholder="没有图片可留空" always-embed="{{true}}" />
     </view>
     <view class="ui-field">
       <text class="ui-field-label">描述</text>
-      <textarea value="{{editForm.description}}" data-field="description" bindinput="onEditInput" maxlength="160" show-confirm-bar="{{false}}" />
+      <textarea
+        value="{{editForm.description}}"
+        data-field="description"
+        bindinput="onEditInput"
+        maxlength="160"
+        show-confirm-bar="{{false}}"
+        fixed="{{true}}"
+        disable-default-padding="{{true}}"
+      />
     </view>
 
     <button class="ui-primary-button" loading="{{saving}}" disabled="{{saving}}" bindtap="saveDishEdit">保存菜品</button>
