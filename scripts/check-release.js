@@ -55,6 +55,8 @@ for (const file of walk(root).filter((entry) => entry.endsWith('.json') && !entr
 
 const cloudSource = read('cloudfunctions/dish-api/index.js')
 const apiSource = read('miniprogram/utils/api.ts')
+const homeWxml = read('miniprogram/pages/newspaper/index.wxml')
+assert.match(homeWxml, /<view[^>]*class="brand-block"[^>]*bindlongpress="openAdmin"/, '首页必须保留长按管理员入口')
 assert.match(cloudSource, /if \(includeOffline\) await requireAdmin\(data\.token\)/, '离线菜品读取缺少管理员校验')
 assert.match(cloudSource, /process\.env\.ADMIN_PASSWORD/, '后台密码必须来自云函数环境变量')
 assert.doesNotMatch(cloudSource, /ADMIN_PASSWORD\s*=\s*['"]/, '禁止在源码硬编码后台密码')
